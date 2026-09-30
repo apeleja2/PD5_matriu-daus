@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATRIUS DE DAUS DE 6 CARES</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pcmat: {
+                            DEFAULT: '#37823c',
+                            dark: '#2b6830',
+                            light: '#4a9d4f',
+                            soft: '#eef7ef',
+                            border: '#a3d4a6'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f4f9f5 0%, #e8f3ea 50%, #f0f7f1 100%);
+            color: #0f172a;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(163, 212, 166, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(55, 130, 60, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+        }
+
+        .glass-button {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .glass-button:hover {
+            background: #ffffff;
+            color: #2b6830;
+            border-color: #37823c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(55, 130, 60, 0.12);
+        }
+
+        /* Matrix Cell Styling */
+        .cell-empty {
+            background: rgba(248, 250, 252, 0.9);
+            border: 2px dashed #a3d4a6;
+            color: #94a3b8;
+        }
+
+        .cell-empty:hover {
+            background: #ffffff;
+            border-color: #37823c;
+            color: #37823c;
+            cursor: pointer;
+        }
+
+        .cell-highlight {
+            outline: 3px solid #f59e0b;
+            transform: scale(1.08);
+            z-index: 20;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+        }
+
+        .cell-dimmed {
+            opacity: 0.22;
+            filter: grayscale(60%);
+        }
+
+        /* Dice Roll Animations */
+        @keyframes dieRoll {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.15); }
+            50% { transform: rotate(180deg) scale(0.9); }
+            75% { transform: rotate(270deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .rolling {
+            animation: dieRoll 0.35s ease-in-out infinite;
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            from { box-shadow: 0 0 8px rgba(225, 29, 72, 0.3); }
+            to { box-shadow: 0 0 20px rgba(225, 29, 72, 0.8); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f7f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a3d4a6;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="p-3 sm:p-6 text-slate-800 flex flex-col min-h-screen justify-between">
+
+    <!-- Header Block -->
+    <header class="max-w-7xl mx-auto w-full mb-6">
+        <div class="glass-panel p-4 sm:p-6 rounded-2xl flex flex-col lg:flex-row items-center justify-between gap-4 border-l-8 border-l-pcmat">
+            <div class="flex items-center gap-4">
+                <div id="op-icon-badge" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pcmat to-pcmat-dark flex items-center justify-center text-3xl shadow-md text-white shrink-0">
+                    🎲
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-pcmat-soft text-pcmat border border-pcmat-border">
+                            Programa PCMat • PD5
+                        </span>
+                        <span class="text-xs text-slate-500 font-semibold">Atzar, Probabilitat i Simulació Computacional</span>
+                    </div>
+                    <h1 id="app-title" class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-0.5">
+                        MATRIUS DE DAUS DE 6 CARES
+                    </h1>
+                    <p id="app-subtitle" class="text-xs sm:text-sm text-slate-600 font-medium">Exploració de l'espai mostral i simulació d'experiments aleatoris</p>
+                </div>
+            </div>
+
+            <!-- Header Quick Stats & Pedagogical Modal Trigger -->
+            <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
+                <button onclick="togglePedagogyModal()" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-amber-900 font-bold text-xs flex items-center gap-2 shadow-sm transition">
+                    <i class="fa-solid fa-graduation-cap text-amber-600 text-base"></i>
+                    <span>Sabers Matemàtics PD5</span>
+                </button>
+
+                <div class="px-3 py-2 bg-white/90 rounded-xl border border-pcmat-border text-center shadow-sm">
+                    <span class="block text-[9px] uppercase font-bold tracking-wider text-slate-500">Espai Mostral</span>
+                    <span class="text-base font-black text-pcmat">36 Casos</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operation Selector Bar -->
+        <div class="mt-4 glass-panel p-2.5 rounded-2xl flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto justify-center">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-600 px-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-calculator text-pcmat"></i> Operació:
+                </span>
+                <button id="op-btn-suma" onclick="setOperation('suma')" class="px-3 py-2 rounded-xl text-xs font-bold transition-all border bg-pcmat text-white border-pcmat-dark shadow-sm flex items-center gap-1.5">
+                    <span>➕ Suma</span>
+                    <span class="text-[10px] opacity-80 font-normal">(D1 + D2)</span>
+                </button>
+                <button id="op-btn-resta_abs" onclick="setOperation('resta_abs')" class="px-3 py-2 rounded-xl text-xs font-bold transition-all border glass-button text-slate-700 hover:text-slate-900 flex items-center gap-1.5">
+                    <span>➖ Gran − Petit</span>
+                    <span class="text-[10px] opacity-75 font-normal">(Diferència)</span>
+                </button>
+                <button id="op-btn-resta_dir" onclick="setOperation('resta_dir')" class="px-3 py-2 rounded-xl text-xs font-bold transition-all border glass-button text-slate-700 hover:text-slate-900 flex items-center gap-1.5">
+                    <span>📉 Resta Directa</span>
+                    <span id="label-resta-dir" class="text-[10px] opacity-75 font-normal">(D1 − D2)</span>
+                </button>
+                <button id="op-btn-multiplicacio" onclick="setOperation('multiplicacio')" class="px-3 py-2 rounded-xl text-xs font-bold transition-all border glass-button text-slate-700 hover:text-slate-900 flex items-center gap-1.5">
+                    <span>✖️ Multiplicació</span>
+                    <span class="text-[10px] opacity-75 font-normal">(Producte)</span>
+                </button>
+            </div>
+
+            <div class="w-full md:w-auto flex justify-center mt-2 md:mt-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-200 gap-2">
+                <button id="btn-swap-order" onclick="toggleDiceOrder()" class="glass-button px-3 py-2 rounded-xl text-xs font-bold text-pcmat-dark border-pcmat-border hover:bg-pcmat-soft flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-right-left text-pcmat"></i>
+                    <span id="swap-btn-label">Ordre: Dau 1 ➔ Dau 2</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="max-w-7xl mx-auto w-full flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Interactive 6x6 Matrix Display -->
+        <section class="lg:col-span-7 flex flex-col gap-4">
+            <div class="glass-panel p-4 sm:p-6 rounded-3xl flex flex-col items-center justify-between h-full">
+                
+                <!-- Matrix Controls Bar -->
+                <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs uppercase tracking-wider font-bold text-slate-500">Estat:</span>
+                        <span id="matrix-status-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                            En construcció (0/36)
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button onclick="fillMatrixAuto()" class="glass-button px-3 py-1.5 rounded-xl text-xs font-semibold text-pcmat hover:border-pcmat bg-pcmat-soft flex items-center gap-1.5">
+                            <i class="fa-solid fa-wand-magic-sparkles text-pcmat"></i> Completar Tot
+                        </button>
+                        <button onclick="resetMatrix()" class="glass-button px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-700 hover:border-rose-400 bg-rose-50 flex items-center gap-1.5">
+                            <i class="fa-solid fa-rotate-left text-rose-500"></i> Netejar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Matrix Grid -->
+                <div class="relative w-full overflow-x-auto flex flex-col items-center justify-center p-2">
+                    <div class="grid grid-cols-7 gap-1.5 sm:gap-2.5 min-w-[320px] max-w-[500px] w-full">
+                        
+                        <!-- Top-Left Axis Symbol -->
+                        <div class="flex items-center justify-center font-black text-slate-700 text-sm bg-pcmat-soft rounded-xl border border-pcmat-border aspect-square shadow-inner">
+                            <span id="matrix-op-symbol" class="text-pcmat text-lg font-black">+</span>
+                        </div>
+
+                        <!-- Top Column Headers (Die 2) -->
+                        <div id="header-row" class="contents"></div>
+
+                        <!-- 6 Rows with Die 1 on Left -->
+                        <div id="matrix-rows" class="contents"></div>
+                    </div>
+                </div>
+
+                <!-- Pedagogical Callout under Matrix -->
+                <div class="w-full mt-4 p-3 bg-pcmat-soft/80 rounded-2xl border border-pcmat-border text-xs text-slate-700 flex items-start gap-2.5 shadow-sm">
+                    <i class="fa-solid fa-circle-info text-pcmat text-base shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-pcmat-dark font-bold">L'Espai Mostral ($E$):</strong> 
+                        <span>Cada casella de la matriu $6 \times 6$ és un resultat possible igualment probable ($\frac{1}{36}$). En comptar quantes vegades es repeteix un valor, calculem la seva <strong>probabilitat teòrica (Laplace)</strong>.</span>
+                    </div>
+                </div>
+
+                <!-- Heatmap Legend -->
+                <div class="w-full mt-2 p-2.5 bg-white/90 rounded-2xl border border-slate-200 text-center text-[11px] text-slate-600 flex items-center justify-around flex-wrap gap-2 shadow-sm">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-pcmat-soft border border-pcmat-border inline-block"></span> Rar ($\frac{1}{36}$)
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-emerald-300 inline-block"></span> Baixa ($\frac{2}{36}$)
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span> Mitjana ($\frac{3\text{-}4}{36}$)
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-rose-500 inline-block pulse-glow"></span> Màxima 🔥 ($\frac{5\text{-}6}{36}$)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Interactive Panels & Simulator -->
+        <section class="lg:col-span-5 flex flex-col gap-5">
+
+            <!-- Panel 1: Outcome Detail Card & Dynamic Filter Pills -->
+            <div id="info-card" class="glass-panel p-5 rounded-3xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-pcmat"></i>
+                            <span id="info-card-title">Anàlisi d'un Esdeveniment</span>
+                        </h2>
+                        <span id="info-probability-badge" class="px-3 py-1 rounded-full text-xs font-black bg-slate-100 border border-slate-300 text-slate-700">
+                            - / 36
+                        </span>
+                    </div>
+
+                    <p id="info-card-desc" class="text-xs text-slate-600 mb-3 leading-relaxed font-medium">
+                        Clica qualsevol casella de la matriu o un botó inferior per conèixer la seva probabilitat de Laplace i el seu patró.
+                    </p>
+                </div>
+
+                <!-- Outcome Selector Buttons -->
+                <div>
+                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Filtrar per Valor del Resultat:</div>
+                    <div class="grid grid-cols-6 sm:grid-cols-11 gap-1.5" id="sum-selector-buttons">
+                        <!-- Dynamic Buttons Injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 2: Histogram (Teòric vs Experimental) -->
+            <div class="glass-panel p-5 rounded-3xl flex flex-col flex-grow">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2">
+                    <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-simple text-pcmat"></i>
+                        <span>Distribució: Teòria vs Experiment</span>
+                    </h2>
+                    <span id="convergence-badge" class="px-2.5 py-1 rounded-full text-[10px] font-bold border bg-slate-100 text-slate-600 transition-all">
+                        Inicia la simulació
+                    </span>
+                </div>
+
+                <!-- Dual Dynamic Histogram Bars -->
+                <div id="histogram-container" class="flex-grow flex items-end justify-between gap-1.5 pt-5 pb-2 min-h-[150px] px-2">
+                    <!-- Injected by JS -->
+                </div>
+
+                <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-200 text-[11px] text-slate-600">
+                    <div class="flex items-center gap-3">
+                        <span class="flex items-center gap-1 font-semibold"><span class="w-2.5 h-2.5 rounded bg-pcmat inline-block"></span> Teòric (Laplace)</span>
+                        <span class="flex items-center gap-1 font-semibold"><span class="w-2.5 h-2.5 rounded bg-amber-500 inline-block"></span> Experimental</span>
+                    </div>
+                    <span id="mae-error-display" class="font-mono text-slate-700 font-semibold">Error mitjà: -</span>
+                </div>
+            </div>
+
+            <!-- Panel 3: Simulator & Law of Large Numbers -->
+            <div id="simulator-panel" class="glass-panel p-5 rounded-3xl flex flex-col gap-3">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-dice-five text-rose-500"></i>
+                            <span>Simulador (Llei dels Grans Nombres)</span>
+                        </h2>
+                        <p class="text-[11px] text-slate-500">Comprova com l'atzar es regula en augmentar $N$</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <span id="sim-total-count" class="text-xs font-mono bg-white px-2.5 py-1 rounded-lg border border-pcmat-border text-pcmat-dark font-bold shadow-sm">
+                            0 tirades
+                        </span>
+                        <button onclick="resetSimulation()" class="px-2 py-1 text-xs font-bold rounded-lg border border-slate-300 bg-white text-rose-600 hover:bg-rose-50 transition shadow-sm" title="Reiniciar simulació">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dice Visualizer -->
+                <div class="flex items-center justify-center gap-3 py-2 bg-white/90 rounded-2xl border border-slate-200 shadow-inner">
+                    <div id="die-1-display" class="w-12 h-12 bg-gradient-to-br from-white to-slate-100 text-slate-900 rounded-xl flex items-center justify-center text-3xl shadow font-bold border border-slate-200">
+                        ⚀
+                    </div>
+                    <div id="sim-op-symbol" class="text-xl font-black text-pcmat">+</div>
+                    <div id="die-2-display" class="w-12 h-12 bg-gradient-to-br from-white to-slate-100 text-slate-900 rounded-xl flex items-center justify-center text-3xl shadow font-bold border border-slate-200">
+                        ⚀
+                    </div>
+                    <div class="text-xl font-black text-slate-400">=</div>
+                    <div id="die-sum-display" class="w-12 h-12 bg-gradient-to-br from-pcmat to-pcmat-dark text-white rounded-xl flex items-center justify-center text-lg font-black shadow border border-pcmat-border">
+                        2
+                    </div>
+                </div>
+
+                <!-- Roll Volume Controls -->
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                    <button onclick="rollDice(1)" class="glass-button py-1.5 rounded-xl text-xs font-bold text-slate-700 flex flex-col items-center justify-center">
+                        <span>+1</span>
+                        <span class="text-[8px] font-normal text-slate-500">Tirada</span>
+                    </button>
+                    <button onclick="rollDice(10)" class="glass-button py-1.5 rounded-xl text-xs font-bold text-pcmat-dark flex flex-col items-center justify-center bg-pcmat-soft">
+                        <span>+10</span>
+                        <span class="text-[8px] font-normal text-slate-500">Tirades</span>
+                    </button>
+                    <button onclick="rollDice(100)" class="glass-button py-1.5 rounded-xl text-xs font-bold text-amber-700 flex flex-col items-center justify-center bg-amber-50/50">
+                        <span>+100</span>
+                        <span class="text-[8px] font-normal text-slate-500">Tirades</span>
+                    </button>
+                    <button onclick="rollDice(1000)" class="glass-button py-1.5 rounded-xl text-xs font-bold text-rose-700 flex flex-col items-center justify-center bg-rose-50/50">
+                        <span>+1.000</span>
+                        <span class="text-[8px] font-normal text-slate-500">Tirades</span>
+                    </button>
+                    <button onclick="rollDice(5000)" class="glass-button py-1.5 rounded-xl text-xs font-bold text-emerald-700 flex flex-col items-center justify-center bg-emerald-50/50">
+                        <span>+5.000</span>
+                        <span class="text-[8px] font-normal text-slate-500">Tirades</span>
+                    </button>
+                    <button id="btn-auto-roll" onclick="toggleAutoRoll()" class="glass-button py-1.5 rounded-xl text-xs font-bold text-pcmat-dark flex items-center justify-center gap-1 bg-pcmat-soft border-pcmat-border">
+                        <i class="fa-solid fa-play text-[10px]"></i> Auto
+                    </button>
+                </div>
+
+                <!-- Live Pedagogical Feedback Assistant -->
+                <div id="pedagogical-hint-box" class="bg-amber-50 p-3 rounded-2xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5 transition-all">
+                    <i class="fa-solid fa-lightbulb text-amber-500 text-lg shrink-0 mt-0.5"></i>
+                    <div id="pedagogical-hint-text">
+                        <strong class="text-slate-900 block">Assistent Pedagògic PCMat:</strong>
+                        <span>Encara no has fet cap tirada. Utilitza els botons superiors per simular el llançament de 2 daus i observa la diferència entre la freqüència experimental (taronja) i la probabilitat teòrica (verda).</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Modal: Sabers Matemàtics i Guia Didàctica PD5 -->
+    <div id="pedagogy-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel bg-white max-w-2xl w-full rounded-3xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col gap-4 border-2 border-pcmat-border">
+            
+            <div class="flex items-start justify-between border-b pb-3 border-slate-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-pcmat text-white flex items-center justify-center text-xl font-bold">
+                        📘
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900">Sabers Matemàtics i PD5 PCMat</h3>
+                        <p class="text-xs text-slate-500">Pensament Computacional i Matemàtic aplicat a l'Atzar</p>
+                    </div>
+                </div>
+                <button onclick="togglePedagogyModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1">
+                    ✕
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-700 leading-relaxed">
+                <!-- Concept 1 -->
+                <div class="bg-pcmat-soft p-3.5 rounded-2xl border border-pcmat-border">
+                    <h4 class="font-extrabold text-pcmat-dark text-sm mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-table-cells"></i> 1. L'Espai Mostral ($E$) i la Regla de Laplace
+                    </h4>
+                    <p>
+                        Quan tirem dos daus de 6 cares, tenim un total de <strong>$6 \times 6 = 36$ parelles possibles</strong>. Com que tots els resultats dels daus són igualment probables, la matriu de $6 \times 6$ representa l'espai mostral complet.
+                    </p>
+                    <p class="mt-1">
+                        La probabilitat teòrica d'un esdeveniment es calcula amb la <strong>Regla de Laplace</strong>:
+                    </p>
+                    <div class="mt-2 text-center bg-white p-2 rounded-xl font-mono text-pcmat-dark font-bold border border-pcmat-border">
+                        P(Resultat) = (Nombre de caselles favorables) / 36
+                    </div>
+                </div>
+
+                <!-- Concept 2 -->
+                <div class="bg-amber-50 p-3.5 rounded-2xl border border-amber-200">
+                    <h4 class="font-extrabold text-amber-900 text-sm mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line"></i> 2. La Llei dels Grans Nombres (Explicada de forma planera)
+                    </h4>
+                    <p>
+                        • <strong>A curt termini (poques tirades, p. ex. 10 o 36):</strong> La sort o la variabilitat aleatòria domina. És fàcil que un resultat poc probable surti moltes vegades. L'error entre la teoria i l'experiment és alt.
+                    </p>
+                    <p class="mt-1">
+                        • <strong>A llarg termini (milers de tirades, p. ex. +5.000):</strong> Les freqüències de l'experiment s'ajusten exactament a les fraccions teòriques. <em>La matemàtica acaba regulant el desordre de l'atzar!</em>
+                    </p>
+                </div>
+
+                <!-- Concept 3 -->
+                <div class="bg-blue-50 p-3.5 rounded-2xl border border-blue-200">
+                    <h4 class="font-extrabold text-blue-900 text-sm mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-laptop-code"></i> 3. Pensament Computacional (PCMat)
+                    </h4>
+                    <p>
+                        A través dels simuladors computacionals podem realitzar en pocs mil·lisis-segons experiments que trigaríem hores a fer a mà. Això ens permet testar hipòtesis, recollir grans volums de dades i validar patrons matemàtics de manera immediata.
+                    </p>
+                </div>
+
+                <!-- Guided Inquiry / Questions -->
+                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                    <h4 class="font-extrabold text-slate-900 text-sm mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass font-bold text-amber-500"></i> Reptes d'Indagació per a l'Alumnat:
+                    </h4>
+                    <ul class="list-disc pl-4 space-y-1 text-slate-700">
+                        <li><strong>Suma:</strong> Per què el valor $7$ és el més freqüent? Quina forma geomètrica dibuixen les caselles del $7$ a la matriu?</li>
+                        <li><strong>Diferència:</strong> Per què la resta $(D1 - D2)$ dona valors negatius, mentre que la resta absoluta (Gran − Petit) només dona valors positius?</li>
+                        <li><strong>Producte:</strong> Quantes vegades surt un nombre parell vs un nombre senar a la multiplicació? Quin és més probable i per què?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-200 flex justify-end">
+                <button onclick="togglePedagogyModal()" class="px-5 py-2 bg-pcmat text-white font-bold text-xs rounded-xl hover:bg-pcmat-dark transition shadow">
+                    Entesos! Continuar Explorant
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DIE_UNICODE = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
+        // Global State
+        let currentOp = 'suma';
+        let isOrderSwapped = false;
+        let matrixState = Array(6).fill(null).map(() => Array(6).fill(null));
+        let simTotalRolls = 0;
+        let simCounts = {};
+        let selectedSumFilter = null;
+        let autoRollInterval = null;
+        let audioCtx = null;
+
+        const OPERATIONS = {
+            suma: {
+                id: 'suma',
+                name: 'Suma de Daus',
+                symbol: '+',
+                badgeIcon: '🎲',
+                subtitle: 'Suma les dues cares dels daus (D1 + D2)',
+                calc: (r, c) => {
+                    const d1 = isOrderSwapped ? (c + 1) : (r + 1);
+                    const d2 = isOrderSwapped ? (r + 1) : (c + 1);
+                    return d1 + d2;
+                },
+                getFormat: (r, c) => {
+                    const d1 = isOrderSwapped ? (c + 1) : (r + 1);
+                    const d2 = isOrderSwapped ? (r + 1) : (c + 1);
+                    return `${d1}+${d2}`;
+                }
+            },
+            resta_abs: {
+                id: 'resta_abs',
+                name: 'Resta: Gran − Petit',
+                symbol: '−',
+                badgeIcon: '➖',
+                subtitle: 'Resta sempre la xifra del dau més gran menys la del dau més petit',
+                calc: (r, c) => Math.abs((r + 1) - (c + 1)),
+                getFormat: (r, c) => {
+                    const d1 = r + 1;
+                    const d2 = c + 1;
+                    const max = Math.max(d1, d2);
+                    const min = Math.min(d1, d2);
+                    return `${max}−${min}`;
+                }
+            },
+            resta_dir: {
+                id: 'resta_dir',
+                name: 'Resta Directa',
+                symbol: '−',
+                badgeIcon: '📉',
+                get subtitle() {
+                    return isOrderSwapped 
+                        ? 'Resta el Dau 2 (Columnes) menys el Dau 1 (Files): (D2 − D1)'
+                        : 'Resta el Dau 1 (Files) menys el Dau 2 (Columnes): (D1 − D2)';
+                },
+                calc: (r, c) => isOrderSwapped ? (c + 1) - (r + 1) : (r + 1) - (c + 1),
+                getFormat: (r, c) => isOrderSwapped ? `${c+1}−${r+1}` : `${r+1}−${c+1}`
+            },
+            multiplicacio: {
+                id: 'multiplicacio',
+                name: 'Multiplicació',
+                symbol: '×',
+                badgeIcon: '✖️',
+                subtitle: 'Producte de les dues cares dels daus (D1 × D2)',
+                calc: (r, c) => (r + 1) * (c + 1),
+                getFormat: (r, c) => isOrderSwapped ? `${c+1}×${r+1}` : `${r+1}×${c+1}`
+            }
+        };
+
+        function togglePedagogyModal() {
+            const modal = document.getElementById('pedagogy-modal');
+            if (modal) {
+                modal.classList.toggle('hidden');
+            }
+        }
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.05);
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'pop') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(260, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.08);
+                } else if (type === 'win') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const noteOsc = audioCtx.createOscillator();
+                        const noteGain = audioCtx.createGain();
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(audioCtx.destination);
+                        noteOsc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.08);
+                        noteGain.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.08);
+                        noteGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.08 + 0.2);
+                        noteOsc.start(audioCtx.currentTime + idx * 0.08);
+                        noteOsc.stop(audioCtx.currentTime + idx * 0.08 + 0.2);
+                    });
+                }
+            } catch (e) {}
+        }
+
+        function toggleDiceOrder() {
+            initAudio();
+            playSound('click');
+            isOrderSwapped = !isOrderSwapped;
+
+            const labelEl = document.getElementById('swap-btn-label');
+            const dirLabel = document.getElementById('label-resta-dir');
+
+            if (isOrderSwapped) {
+                labelEl.innerText = "Ordre: Dau 2 ➔ Dau 1";
+                if (dirLabel) dirLabel.innerText = "(D2 − D1)";
+            } else {
+                labelEl.innerText = "Ordre: Dau 1 ➔ Dau 2";
+                if (dirLabel) dirLabel.innerText = "(D1 − D2)";
+            }
+
+            const op = OPERATIONS[currentOp];
+            document.getElementById('app-subtitle').innerText = typeof op.subtitle === 'function' ? op.subtitle() : op.subtitle;
+
+            resetMatrix();
+            initSumButtons();
+            renderHistogram();
+        }
+
+        function getTheoreticalCounts(opId) {
+            const counts = {};
+            const op = OPERATIONS[opId];
+            for (let r = 0; r < 6; r++) {
+                for (let c = 0; c < 6; c++) {
+                    const val = op.calc(r, c);
+                    counts[val] = (counts[val] || 0) + 1;
+                }
+            }
+            return counts;
+        }
+
+        function getSortedPossibleValues(opId) {
+            const counts = getTheoreticalCounts(opId);
+            return Object.keys(counts).map(Number).sort((a, b) => a - b);
+        }
+
+        function calculateConvergenceMetrics() {
+            if (simTotalRolls === 0) {
+                return { mae: 0, statusText: "Sense dades suficients", statusClass: "text-slate-500", badgeBg: "bg-slate-100 border-slate-200" };
+            }
+
+            const counts = getTheoreticalCounts(currentOp);
+            const possibleVals = getSortedPossibleValues(currentOp);
+            let totalDiff = 0;
+
+            possibleVals.forEach(val => {
+                const theoPct = (counts[val] / 36) * 100;
+                const expPct = ((simCounts[val] || 0) / simTotalRolls) * 100;
+                totalDiff += Math.abs(theoPct - expPct);
+            });
+
+            const mae = totalDiff / possibleVals.length;
+
+            const outcomeCount = possibleVals.length;
+            const thresholdLow = outcomeCount * 8;
+            const thresholdMid = outcomeCount * 30;
+            const thresholdHigh = outcomeCount * 100;
+
+            let statusText = "";
+            let statusClass = "";
+            let badgeBg = "";
+
+            if (simTotalRolls < thresholdLow) {
+                statusText = "🔴 Alta variabilitat (Soroll aleatori)";
+                statusClass = "text-rose-700";
+                badgeBg = "bg-rose-100 border-rose-300";
+            } else if (simTotalRolls < thresholdMid) {
+                statusText = "🟡 Tendència emergent";
+                statusClass = "text-amber-800";
+                badgeBg = "bg-amber-100 border-amber-300";
+            } else if (simTotalRolls < thresholdHigh) {
+                statusText = "🟢 Bona aproximació";
+                statusClass = "text-pcmat-dark font-semibold";
+                badgeBg = "bg-pcmat-soft border-pcmat-border";
+            } else {
+                statusText = "💎 Llei dels Grans Nombres! (Convergència)";
+                statusClass = "text-pcmat-dark font-extrabold";
+                badgeBg = "bg-emerald-100 border-emerald-400 shadow-sm";
+            }
+
+            return { mae, statusText, statusClass, badgeBg };
+        }
+
+        function updatePedagogicalHint() {
+            const textEl = document.getElementById('pedagogical-hint-text');
+            if (!textEl) return;
+
+            if (simTotalRolls === 0) {
+                textEl.innerHTML = `
+                    <strong class="text-slate-900 block">Assistent Pedagògic PCMat:</strong>
+                    <span>Comença simulant poques tirades (<strong>+1 o +10</strong>). Observa com les barres taronges (experiment) no coincideixen amb les verdes (teoria). Això és la fluctuació aleatòria a curt termini.</span>
+                `;
+            } else if (simTotalRolls <= 50) {
+                textEl.innerHTML = `
+                    <strong class="text-amber-900 block">Observació (N = ${simTotalRolls}):</strong>
+                    <span>Amb poques tirades, l'atzar crea "pics" o "buits" estranys. Fes clic a <strong>+1.000 o +5.000</strong> per provar com la simulació computacional aplana les diferències.</span>
+                `;
+            } else if (simTotalRolls <= 500) {
+                textEl.innerHTML = `
+                    <strong class="text-amber-900 block">Transició (N = ${simTotalRolls}):</strong>
+                    <span>La forma de la distribució ja comença a entreveure's! Fixa't com l'error mitjà va disminuint progressivament.</span>
+                `;
+            } else {
+                textEl.innerHTML = `
+                    <strong class="text-pcmat-dark font-bold block">Conclusió Pedagògica (N = ${simTotalRolls.toLocaleString()}):</strong>
+                    <span>¡Demostració de la <strong>Llei dels Grans Nombres</strong>! La barra taronja s'ha calcat quasi exactament sobre la teòrica. La probabilitat teòrica (Laplace) prediu el comportament global a llarg termini.</span>
+                `;
+            }
+        }
+
+        function getHeatmapClass(val, count, maxCount) {
+            const ratio = count / maxCount;
+            if (ratio >= 0.9) return "bg-gradient-to-br from-rose-500 to-amber-500 text-white border-rose-300 pulse-glow font-black shadow-md";
+            if (ratio >= 0.7) return "bg-gradient-to-br from-amber-400 to-amber-200 text-amber-950 border-amber-400 font-bold";
+            if (ratio >= 0.5) return "bg-gradient-to-br from-emerald-400 to-emerald-200 text-emerald-950 border-emerald-400 font-bold";
+            if (ratio >= 0.3) return "bg-gradient-to-br from-pcmat-light to-pcmat-soft text-pcmat-dark border-pcmat-border font-bold";
+            return "bg-gradient-to-br from-pcmat-soft to-slate-100 text-slate-800 border-pcmat-border font-semibold";
+        }
+
+        function setOperation(opId) {
+            initAudio();
+            playSound('click');
+            currentOp = opId;
+            selectedSumFilter = null;
+            simTotalRolls = 0;
+            simCounts = {};
+
+            Object.keys(OPERATIONS).forEach(id => {
+                const btn = document.getElementById(`op-btn-${id}`);
+                if (!btn) return;
+                if (id === opId) {
+                    btn.className = "px-3 py-2 rounded-xl text-xs font-bold transition-all border bg-pcmat text-white border-pcmat-dark shadow-md flex items-center gap-1.5";
+                } else {
+                    btn.className = "px-3 py-2 rounded-xl text-xs font-bold transition-all border glass-button text-slate-700 hover:text-slate-900 flex items-center gap-1.5";
+                }
+            });
+
+            const op = OPERATIONS[opId];
+            document.getElementById('op-icon-badge').innerText = op.badgeIcon;
+            document.getElementById('app-subtitle').innerText = typeof op.subtitle === 'function' ? op.subtitle() : op.subtitle;
+            document.getElementById('matrix-op-symbol').innerText = op.symbol;
+            document.getElementById('sim-op-symbol').innerText = op.symbol;
+
+            resetMatrix();
+            initSumButtons();
+            renderHistogram();
+            updatePedagogicalHint();
+        }
+
+        function initMatrixDOM() {
+            const headerRow = document.getElementById('header-row');
+            headerRow.innerHTML = '';
+
+            for (let d2 = 1; d2 <= 6; d2++) {
+                const headerCell = document.createElement('div');
+                headerCell.className = "flex flex-col items-center justify-center bg-pcmat-soft text-pcmat-dark font-bold border border-pcmat-border rounded-xl aspect-square p-1 shadow-sm";
+                headerCell.innerHTML = `
+                    <span class="text-xl sm:text-2xl">${DIE_UNICODE[d2]}</span>
+                    <span class="text-[10px] sm:text-xs opacity-80">${d2}</span>
+                `;
+                headerRow.appendChild(headerCell);
+            }
+
+            const matrixRowsContainer = document.getElementById('matrix-rows');
+            matrixRowsContainer.innerHTML = '';
+
+            for (let r = 0; r < 6; r++) {
+                const die1Val = r + 1;
+                const rowHeader = document.createElement('div');
+                rowHeader.className = "flex flex-col items-center justify-center bg-pcmat-soft text-pcmat-dark font-bold border border-pcmat-border rounded-xl aspect-square p-1 shadow-sm";
+                rowHeader.innerHTML = `
+                    <span class="text-xl sm:text-2xl">${DIE_UNICODE[die1Val]}</span>
+                    <span class="text-[10px] sm:text-xs opacity-80">${die1Val}</span>
+                `;
+                matrixRowsContainer.appendChild(rowHeader);
+
+                for (let c = 0; c < 6; c++) {
+                    const cellBtn = document.createElement('button');
+                    cellBtn.id = `cell-${r}-${c}`;
+                    cellBtn.onclick = () => onCellClick(r, c);
+                    matrixRowsContainer.appendChild(cellBtn);
+                }
+            }
+
+            updateMatrixDOM();
+        }
+
+        function updateMatrixDOM() {
+            let filledCount = 0;
+            const op = OPERATIONS[currentOp];
+            const counts = getTheoreticalCounts(currentOp);
+            const maxCount = Math.max(...Object.values(counts));
+
+            for (let r = 0; r < 6; r++) {
+                for (let c = 0; c < 6; c++) {
+                    const cellBtn = document.getElementById(`cell-${r}-${c}`);
+                    if (!cellBtn) continue;
+
+                    const val = matrixState[r][c];
+                    let baseClass = "aspect-square rounded-xl font-extrabold text-base sm:text-lg flex flex-col items-center justify-center transition-all duration-300 relative border shadow-sm ";
+
+                    if (val === null) {
+                        cellBtn.className = baseClass + "cell-empty";
+                        cellBtn.innerHTML = `<span class="text-xs opacity-40">?</span>`;
+                    } else {
+                        filledCount++;
+                        const cellCount = counts[val] || 1;
+                        let sumClass = getHeatmapClass(val, cellCount, maxCount);
+
+                        let filterState = "";
+                        if (selectedSumFilter !== null) {
+                            filterState = (val === selectedSumFilter) ? " cell-highlight" : " cell-dimmed";
+                        }
+
+                        cellBtn.className = baseClass + sumClass + filterState;
+                        cellBtn.innerHTML = `
+                            <span class="${val < 0 ? 'text-xs sm:text-sm' : ''}">${val}</span>
+                            <span class="text-[9px] font-normal opacity-85">${op.getFormat(r, c)}</span>
+                        `;
+                    }
+                }
+            }
+
+            const badge = document.getElementById('matrix-status-badge');
+            if (filledCount === 36) {
+                badge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+                badge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> Matriu Completa (36/36)`;
+            } else {
+                badge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300";
+                badge.innerText = `En construcció (${filledCount}/36)`;
+            }
+
+            renderHistogram();
+        }
+
+        function onCellClick(r, c) {
+            initAudio();
+            const correctVal = OPERATIONS[currentOp].calc(r, c);
+
+            if (matrixState[r][c] === null) {
+                matrixState[r][c] = correctVal;
+                playSound('pop');
+            } else {
+                selectSumFilter(matrixState[r][c]);
+                playSound('click');
+                return;
+            }
+
+            let count = 0;
+            matrixState.forEach(row => row.forEach(v => { if (v !== null) count++; }));
+            if (count === 36) {
+                playSound('win');
+                if (window.confetti) confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+            }
+
+            updateMatrixDOM();
+        }
+
+        function fillMatrixAuto() {
+            initAudio();
+            playSound('win');
+            const op = OPERATIONS[currentOp];
+            for (let r = 0; r < 6; r++) {
+                for (let c = 0; c < 6; c++) {
+                    matrixState[r][c] = op.calc(r, c);
+                }
+            }
+            updateMatrixDOM();
+            if (window.confetti) confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+        }
+
+        function resetMatrix() {
+            initAudio();
+            playSound('click');
+            matrixState = Array(6).fill(null).map(() => Array(6).fill(null));
+            selectedSumFilter = null;
+            updateMatrixDOM();
+            updateInfoCard(null);
+        }
+
+        function initSumButtons() {
+            const container = document.getElementById('sum-selector-buttons');
+            container.innerHTML = '';
+
+            const possibleVals = getSortedPossibleValues(currentOp);
+            const counts = getTheoreticalCounts(currentOp);
+
+            possibleVals.forEach(val => {
+                const count = counts[val];
+                const btn = document.createElement('button');
+                btn.id = `btn-sum-${val}`;
+                btn.className = "py-1.5 px-1 rounded-xl text-xs font-bold transition-all border glass-button text-center flex flex-col items-center justify-center";
+                btn.onclick = () => selectSumFilter(val);
+                btn.innerHTML = `
+                    <span class="text-xs sm:text-sm font-extrabold">${val}</span>
+                    <span class="text-[9px] opacity-70">${count}/36</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectSumFilter(sum) {
+            initAudio();
+            playSound('click');
+
+            selectedSumFilter = (selectedSumFilter === sum) ? null : sum;
+
+            const possibleVals = getSortedPossibleValues(currentOp);
+            possibleVals.forEach(s => {
+                const btn = document.getElementById(`btn-sum-${s}`);
+                if (!btn) return;
+                if (selectedSumFilter === s) {
+                    btn.className = "py-1.5 px-1 rounded-xl text-xs font-bold transition-all border-2 border-pcmat bg-pcmat-soft text-pcmat-dark shadow-md scale-105";
+                } else {
+                    btn.className = "py-1.5 px-1 rounded-xl text-xs font-bold transition-all border glass-button text-center opacity-80";
+                }
+            });
+
+            updateMatrixDOM();
+            updateInfoCard(selectedSumFilter);
+        }
+
+        function updateInfoCard(val) {
+            const titleEl = document.getElementById('info-card-title');
+            const descEl = document.getElementById('info-card-desc');
+            const badgeEl = document.getElementById('info-probability-badge');
+
+            if (val === null) {
+                titleEl.innerText = "Anàlisi d'un Esdeveniment";
+                descEl.innerText = "Clica qualsevol casella de la matriu o un dels botons inferiors per conèixer la seva probabilitat teòrica de Laplace i la seva disposició visual.";
+                badgeEl.innerText = "- / 36";
+                badgeEl.className = "px-3 py-1 rounded-full text-xs font-black bg-slate-100 border border-slate-300 text-slate-700";
+                return;
+            }
+
+            const counts = getTheoreticalCounts(currentOp);
+            const count = counts[val] || 0;
+            const pct = ((count / 36) * 100).toFixed(1);
+            const maxCount = Math.max(...Object.values(counts));
+
+            titleEl.innerHTML = `Resultat: <span class="text-pcmat font-black text-xl">${val}</span>`;
+            badgeEl.innerText = `${count} / 36 (${pct}%)`;
+
+            if (count === maxCount) {
+                badgeEl.className = "px-3 py-1 rounded-full text-xs font-black bg-rose-100 border border-rose-300 text-rose-800 shadow-sm";
+                descEl.innerHTML = `🔥 <strong>El valor ${val} és el MÉS PROBABLE!</strong> Té ${count} combinacions a la matriu. Segons Laplace, tens una probabilitat de $\\frac{${count}}{36} = ${pct}\\%$.`;
+            } else if (count === 1) {
+                badgeEl.className = "px-3 py-1 rounded-full text-xs font-black bg-pcmat-soft border border-pcmat-border text-pcmat-dark";
+                descEl.innerHTML = `🧊 <strong>El valor ${val} és un esdeveniment molt rar.</strong> Només té 1 cas favorable a tota la matriu ($\\frac{1}{36} \\approx 2,8\\%$).`;
+            } else {
+                badgeEl.className = "px-3 py-1 rounded-full text-xs font-black bg-amber-100 border border-amber-300 text-amber-800";
+                descEl.innerHTML = `Hi ha <strong>${count} caselles favorables</strong> que donen el resultat ${val}. Probabilitat teòrica: $\\frac{${count}}{36} = ${pct}\\%$.`;
+            }
+        }
+
+        function renderHistogram() {
+            const container = document.getElementById('histogram-container');
+            container.innerHTML = '';
+
+            const counts = getTheoreticalCounts(currentOp);
+            const possibleVals = getSortedPossibleValues(currentOp);
+            const maxTheoCount = Math.max(...Object.values(counts));
+            const theoMaxPct = (maxTheoCount / 36) * 100;
+
+            let maxExpPct = 0;
+            if (simTotalRolls > 0) {
+                possibleVals.forEach(val => {
+                    const pct = ((simCounts[val] || 0) / simTotalRolls) * 100;
+                    if (pct > maxExpPct) maxExpPct = pct;
+                });
+            }
+
+            const scaleMaxPct = Math.max(theoMaxPct, maxExpPct, 1);
+
+            possibleVals.forEach(val => {
+                const theoCount = counts[val];
+                const theoPct = (theoCount / 36) * 100;
+                const theoHeightPct = (theoPct / scaleMaxPct) * 100;
+
+                let expPct = 0;
+                let expHeightPct = 0;
+                if (simTotalRolls > 0) {
+                    expPct = ((simCounts[val] || 0) / simTotalRolls) * 100;
+                    expHeightPct = (expPct / scaleMaxPct) * 100;
+                }
+
+                const barCol = document.createElement('div');
+                barCol.className = "flex-1 flex flex-col items-center h-full justify-end group cursor-pointer min-w-[12px]";
+                barCol.onclick = () => selectSumFilter(val);
+
+                const isSelected = selectedSumFilter === val;
+
+                barCol.innerHTML = `
+                    <div class="text-[9px] sm:text-[10px] font-bold text-slate-700 mb-1 flex flex-col items-center leading-tight">
+                        ${simTotalRolls > 0 ? `<span class="text-amber-600 font-extrabold">${expPct.toFixed(1)}%</span>` : ''}
+                        <span class="text-pcmat text-[8px] font-semibold opacity-90">T: ${theoPct.toFixed(1)}%</span>
+                    </div>
+                    
+                    <div class="w-full bg-slate-100/90 rounded-t-lg overflow-hidden flex items-end justify-center p-0.5 border border-slate-300 h-full max-h-[120px] relative shadow-inner">
+                        <div class="absolute bottom-0 w-full bg-pcmat-soft border-t-2 border-pcmat rounded-t transition-all duration-300"
+                             style="height: ${theoHeightPct}%; z-index: 1;">
+                        </div>
+
+                        <div class="w-3/4 bg-gradient-to-t from-amber-500 to-rose-500 rounded-t transition-all duration-300 relative ${isSelected ? 'ring-2 ring-amber-400 brightness-110' : 'opacity-90 group-hover:opacity-100'}" 
+                             style="height: ${expHeightPct}%; z-index: 2;">
+                        </div>
+                    </div>
+
+                    <div class="text-[9px] sm:text-[10px] font-extrabold mt-1.5 ${isSelected ? 'text-pcmat underline font-black text-xs' : 'text-slate-600'}">
+                        ${val}
+                    </div>
+                `;
+
+                container.appendChild(barCol);
+            });
+
+            const metrics = calculateConvergenceMetrics();
+            const badge = document.getElementById('convergence-badge');
+            const maeEl = document.getElementById('mae-error-display');
+
+            if (badge) {
+                badge.className = `px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all ${metrics.badgeBg} ${metrics.statusClass}`;
+                badge.innerText = metrics.statusText;
+            }
+
+            if (maeEl) {
+                if (simTotalRolls === 0) {
+                    maeEl.innerText = "Error mitjà: -";
+                } else {
+                    maeEl.innerHTML = `Error mitjà: <span class="font-bold text-pcmat-dark">${metrics.mae.toFixed(2)}%</span>`;
+                }
+            }
+        }
+
+        function resetSimulation() {
+            initAudio();
+            playSound('click');
+            
+            if (autoRollInterval) {
+                toggleAutoRoll();
+            }
+
+            simTotalRolls = 0;
+            simCounts = {};
+
+            const die1El = document.getElementById('die-1-display');
+            const die2El = document.getElementById('die-2-display');
+            const sumEl = document.getElementById('die-sum-display');
+
+            if (die1El) die1El.innerText = DIE_UNICODE[1];
+            if (die2El) die2El.innerText = DIE_UNICODE[1];
+            if (sumEl) sumEl.innerText = OPERATIONS[currentOp].calc(0, 0);
+
+            document.getElementById('sim-total-count').innerText = "0 tirades";
+            renderHistogram();
+            updatePedagogicalHint();
+        }
+
+        function rollDice(amount) {
+            initAudio();
+            playSound('pop');
+
+            const die1El = document.getElementById('die-1-display');
+            const die2El = document.getElementById('die-2-display');
+            const sumEl = document.getElementById('die-sum-display');
+            const op = OPERATIONS[currentOp];
+
+            if (amount === 1) {
+                die1El.classList.add('rolling');
+                die2El.classList.add('rolling');
+
+                setTimeout(() => {
+                    const d1 = Math.floor(Math.random() * 6) + 1;
+                    const d2 = Math.floor(Math.random() * 6) + 1;
+                    const res = op.calc(d1 - 1, d2 - 1);
+
+                    die1El.innerText = DIE_UNICODE[d1];
+                    die2El.innerText = DIE_UNICODE[d2];
+                    sumEl.innerText = res;
+
+                    die1El.classList.remove('rolling');
+                    die2El.classList.remove('rolling');
+
+                    simTotalRolls += 1;
+                    simCounts[res] = (simCounts[res] || 0) + 1;
+
+                    document.getElementById('sim-total-count').innerText = `${simTotalRolls.toLocaleString()} tirades`;
+                    renderHistogram();
+                    updatePedagogicalHint();
+                }, 180);
+            } else {
+                for (let i = 0; i < amount; i++) {
+                    const d1 = Math.floor(Math.random() * 6) + 1;
+                    const d2 = Math.floor(Math.random() * 6) + 1;
+                    const res = op.calc(d1 - 1, d2 - 1);
+
+                    simTotalRolls += 1;
+                    simCounts[res] = (simCounts[res] || 0) + 1;
+                }
+
+                const lastD1 = Math.floor(Math.random() * 6) + 1;
+                const lastD2 = Math.floor(Math.random() * 6) + 1;
+                die1El.innerText = DIE_UNICODE[lastD1];
+                die2El.innerText = DIE_UNICODE[lastD2];
+                sumEl.innerText = op.calc(lastD1 - 1, lastD2 - 1);
+
+                document.getElementById('sim-total-count').innerText = `${simTotalRolls.toLocaleString()} tirades`;
+                renderHistogram();
+                updatePedagogicalHint();
+            }
+        }
+
+        function toggleAutoRoll() {
+            const btn = document.getElementById('btn-auto-roll');
+            if (autoRollInterval) {
+                clearInterval(autoRollInterval);
+                autoRollInterval = null;
+                if (btn) {
+                    btn.innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Auto`;
+                    btn.classList.remove('bg-rose-600', 'border-rose-400', 'animate-pulse', 'text-white');
+                    btn.classList.add('glass-button', 'text-pcmat-dark', 'bg-pcmat-soft');
+                }
+            } else {
+                if (btn) {
+                    btn.innerHTML = `<i class="fa-solid fa-pause text-[10px]"></i> Aturar`;
+                    btn.classList.remove('glass-button', 'text-pcmat-dark', 'bg-pcmat-soft');
+                    btn.classList.add('bg-rose-600', 'border-rose-400', 'animate-pulse', 'text-white');
+                }
+                autoRollInterval = setInterval(() => {
+                    rollDice(100);
+                }, 150);
+            }
+        }
+
+        window.onload = function() {
+            setOperation('suma');
+            initMatrixDOM();
+            initSumButtons();
+        };
+    </script>
+</body>
+</html>
