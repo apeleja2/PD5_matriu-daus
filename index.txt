@@ -157,7 +157,7 @@
             <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
                 <button onclick="togglePedagogyModal()" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-amber-900 font-bold text-xs flex items-center gap-2 shadow-sm transition">
                     <i class="fa-solid fa-graduation-cap text-amber-600 text-base"></i>
-                    <span>Sabers Matemàtics PD5</span>
+                    <span>Orientacions pel docent</span>
                 </button>
 
                 <div class="px-3 py-2 bg-white/90 rounded-xl border border-pcmat-border text-center shadow-sm">
