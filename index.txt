@@ -149,7 +149,7 @@
             <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
                 <button onclick="togglePedagogyModal()" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-amber-900 font-bold text-xs flex items-center gap-2 shadow-sm transition">
                     <i class="fa-solid fa-graduation-cap text-amber-600 text-base"></i>
-                    <span>Orientacions docents PD5</span>
+                    <span>Orientacions pels docents</span>
                 </button>
 
                 <div class="px-3 py-2 bg-white/90 rounded-xl border border-pcmat-border text-center shadow-sm">
@@ -374,8 +374,457 @@
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-pcmat text-white flex items-center justify-center text-xl font-bold">📘</div>
                     <div>
-                        <h3 class="text-xl font-black text-slate-900">Orientacions pel docent</h3>
-                        <p class="text-xs text-slate-500">Pensament Computacional i Matemàtic aplicat a l'Atzar</p>
+                        <h3 class="text-xl font-black text-slate-900">Orientacions docents</h3>
+                        <p class="text-xs text-slate-500">Programa PCMat • Pensament Computacional i Matemàtic (PD5)</p>
                     </div>
                 </div>
-                <
+                <button onclick="togglePedagogyModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold">
+                    &times;
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                <div class="bg-pcmat-soft/60 p-3.5 rounded-2xl border border-pcmat-border">
+                    <h4 class="font-bold text-pcmat-dark text-sm flex items-center gap-2 mb-1">
+                        <i class="fa-solid fa-bullseye text-pcmat"></i> Objectiu Didàctic PD5
+                    </h4>
+                    <p>Connectar la modelització teòrica de l'espai mostral (regla de Laplace) amb la simulació computacional (Llei dels Grans Nombres) mitjançant la construcció interactiva de matrius de dos daus de 6 cares.</p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-900 text-sm mb-1">💡 Proposta d'aula pas a pas:</h4>
+                    <ol class="list-decimal list-inside space-y-1.5 pl-1">
+                        <li><strong>Construcció guiada:</strong> Demana a l'alumnat emplenar la matriu manualment o observar la distribució diagonal de les sumes/diferències.</li>
+                        <li><strong>Identificació de patrons:</strong> Observar per què la suma 7 té la freqüència més alta (6/36) mentre que el 2 i el 12 només tenen 1/36.</li>
+                        <li><strong>Experimentació amb N creixent:</strong> Realitzar 10, 100 i 1.000 tirades al simulador i comparar el gràfic taronja (experimental) amb el verd (teòric).</li>
+                        <li><strong>Canvi d'operació:</strong> Analitzar com canvia la simetria de la distribució quan passem de la <i>Suma</i> a la <i>Resta Absoluta</i> o a la <i>Multiplicació</i>.</li>
+                    </ol>
+                </div>
+
+                <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200">
+                    <strong class="text-amber-900 block mb-1 font-bold">🧠 Connexió amb el Pensament Computacional:</strong>
+                    <p class="text-amber-800 text-xs">L'alumnat experimenta el concepte d'<strong>algorisme d'espera i convergència Monte Carlo</strong>: com la incertesa individual a curt termini es converteix en un patró determinista a gran escala.</p>
+                </div>
+            </div>
+
+            <div class="mt-2 pt-3 border-t border-slate-200 flex justify-end">
+                <button onclick="togglePedagogyModal()" class="px-5 py-2 bg-pcmat hover:bg-pcmat-dark text-white rounded-xl font-bold text-xs shadow transition">
+                    Entesos!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DICE_FACES = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+        
+        let state = {
+            operation: 'suma', // 'suma', 'resta_abs', 'resta_dir', 'multiplicacio'
+            orderReversed: false, // false: Row=D1, Col=D2; true: Row=D2, Col=D1
+            matrix: Array(6).fill(null).map(() => Array(6).fill(null)),
+            selectedValue: null,
+            simTotal: 0,
+            simCounts: {},
+            autoRolling: false,
+            autoRollTimer: null
+        };
+
+        function calculateValue(d1, d2, op) {
+            switch(op) {
+                case 'suma': return d1 + d2;
+                case 'resta_abs': return Math.abs(d1 - d2);
+                case 'resta_dir': return d1 - d2;
+                case 'multiplicacio': return d1 * d2;
+                default: return d1 + d2;
+            }
+        }
+
+        function getPossibleValues(op) {
+            const vals = new Set();
+            for(let r=1; r<=6; r++) {
+                for(let c=1; c<=6; c++) {
+                    vals.add(calculateValue(r, c, op));
+                }
+            }
+            return Array.from(vals).sort((a,b) => a - b);
+        }
+
+        function getTheoreticalCounts(op) {
+            const counts = {};
+            getPossibleValues(op).forEach(v => counts[v] = 0);
+            for(let r=1; r<=6; r++) {
+                for(let c=1; c<=6; c++) {
+                    const val = calculateValue(r, c, op);
+                    counts[val] = (counts[val] || 0) + 1;
+                }
+            }
+            return counts;
+        }
+
+        function initMatrixDOM() {
+            const headerRow = document.getElementById('header-row');
+            const matrixRows = document.getElementById('matrix-rows');
+            
+            headerRow.innerHTML = '';
+            matrixRows.innerHTML = '';
+
+            const rowDiceLabel = state.orderReversed ? 'Dau 2' : 'Dau 1';
+            const colDiceLabel = state.orderReversed ? 'Dau 1' : 'Dau 2';
+
+            for (let c = 1; c <= 6; c++) {
+                const headCell = document.createElement('div');
+                headCell.className = "flex flex-col items-center justify-center font-bold text-slate-600 bg-white/80 rounded-xl border border-slate-200 aspect-square shadow-sm text-xs sm:text-sm";
+                headCell.innerHTML = `<span class="text-[9px] text-slate-400 leading-none">${colDiceLabel}</span><span class="text-base sm:text-lg">${DICE_FACES[c-1]}</span>`;
+                headerRow.appendChild(headCell);
+            }
+
+            for (let r = 1; r <= 6; r++) {
+                const labelCell = document.createElement('div');
+                labelCell.className = "flex flex-col items-center justify-center font-bold text-slate-600 bg-white/80 rounded-xl border border-slate-200 aspect-square shadow-sm text-xs sm:text-sm";
+                labelCell.innerHTML = `<span class="text-[9px] text-slate-400 leading-none">${rowDiceLabel}</span><span class="text-base sm:text-lg">${DICE_FACES[r-1]}</span>`;
+                matrixRows.appendChild(labelCell);
+
+                for (let c = 1; c <= 6; c++) {
+                    const cell = document.createElement('button');
+                    cell.id = `cell-${r-1}-${c-1}`;
+                    cell.onclick = () => onCellClick(r-1, c-1);
+                    cell.className = "cell-empty font-extrabold text-sm sm:text-base rounded-xl transition-all aspect-square flex items-center justify-center shadow-sm hover:scale-105";
+                    cell.innerText = '?';
+                    matrixRows.appendChild(cell);
+                }
+            }
+
+            updateMatrixDOM();
+            renderSelectors();
+            renderHistogram();
+        }
+
+        function updateMatrixDOM() {
+            let filledCount = 0;
+            const theoretical = getTheoreticalCounts(state.operation);
+
+            for (let r = 0; r < 6; r++) {
+                for (let c = 0; c < 6; c++) {
+                    const cell = document.getElementById(`cell-${r}-${c}`);
+                    if (!cell) continue;
+
+                    const val = state.matrix[r][c];
+                    const d1 = state.orderReversed ? (c + 1) : (r + 1);
+                    const d2 = state.orderReversed ? (r + 1) : (c + 1);
+                    const expectedVal = calculateValue(d1, d2, state.operation);
+
+                    if (val !== null) {
+                        filledCount++;
+                        cell.innerText = val;
+                        
+                        const count = theoretical[val] || 1;
+                        let bgClass = "bg-pcmat-soft border-pcmat-border text-pcmat-dark";
+                        if (count === 2) bgClass = "bg-emerald-200 border-emerald-400 text-emerald-900";
+                        else if (count >= 3 && count <= 4) bgClass = "bg-amber-200 border-amber-400 text-amber-900";
+                        else if (count >= 5) bgClass = "bg-rose-500 border-rose-600 text-white font-black";
+
+                        cell.className = `font-black text-sm sm:text-base rounded-xl border transition-all aspect-square flex items-center justify-center shadow-sm ${bgClass}`;
+                    } else {
+                        cell.innerText = '?';
+                        cell.className = "cell-empty font-extrabold text-sm sm:text-base rounded-xl transition-all aspect-square flex items-center justify-center shadow-sm hover:scale-105";
+                    }
+
+                    if (state.selectedValue !== null) {
+                        if (val === state.selectedValue || (val === null && expectedVal === state.selectedValue)) {
+                            cell.classList.add('cell-highlight');
+                            cell.classList.remove('cell-dimmed');
+                        } else {
+                            cell.classList.remove('cell-highlight');
+                            cell.classList.add('cell-dimmed');
+                        }
+                    } else {
+                        cell.classList.remove('cell-highlight', 'cell-dimmed');
+                    }
+                }
+            }
+
+            const statusBadge = document.getElementById('matrix-status-badge');
+            if (filledCount === 36) {
+                statusBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-pcmat-soft text-pcmat-dark border border-pcmat-border";
+                statusBadge.innerHTML = `<i class="fa-solid fa-check-circle"></i> Completa (36/36)`;
+            } else {
+                statusBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300";
+                statusBadge.innerText = `En construcció (${filledCount}/36)`;
+            }
+        }
+
+        function onCellClick(r, c) {
+            const d1 = state.orderReversed ? (c + 1) : (r + 1);
+            const d2 = state.orderReversed ? (r + 1) : (c + 1);
+            const calculated = calculateValue(d1, d2, state.operation);
+
+            if (state.matrix[r][c] === null) {
+                state.matrix[r][c] = calculated;
+            } else {
+                selectFilterValue(calculated);
+            }
+
+            updateMatrixDOM();
+
+            let filled = 0;
+            for(let i=0; i<6; i++) for(let j=0; j<6; j++) if(state.matrix[i][j] !== null) filled++;
+            if (filled === 36 && typeof confetti === 'function') {
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+            }
+        }
+
+        function fillMatrixAuto() {
+            for (let r = 0; r < 6; r++) {
+                for (let c = 0; c < 6; c++) {
+                    const d1 = state.orderReversed ? (c + 1) : (r + 1);
+                    const d2 = state.orderReversed ? (r + 1) : (c + 1);
+                    state.matrix[r][c] = calculateValue(d1, d2, state.operation);
+                }
+            }
+            updateMatrixDOM();
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
+            }
+        }
+
+        function resetMatrix() {
+            state.matrix = Array(6).fill(null).map(() => Array(6).fill(null));
+            state.selectedValue = null;
+            updateMatrixDOM();
+            updateInfoCard();
+        }
+
+        function setOperation(op) {
+            state.operation = op;
+            ['suma', 'resta_abs', 'resta_dir', 'multiplicacio'].forEach(o => {
+                const btn = document.getElementById(`op-btn-${o}`);
+                if (o === op) {
+                    btn.className = "px-3 py-2 rounded-xl text-xs font-bold transition-all border bg-pcmat text-white border-pcmat-dark shadow-sm flex items-center gap-1.5";
+                } else {
+                    btn.className = "px-3 py-2 rounded-xl text-xs font-bold transition-all border glass-button text-slate-700 hover:text-slate-900 flex items-center gap-1.5";
+                }
+            });
+
+            const symMap = { 'suma': '+', 'resta_abs': '|−|', 'resta_dir': '−', 'multiplicacio': '&times;' };
+            document.getElementById('matrix-op-symbol').innerHTML = symMap[op];
+            document.getElementById('sim-op-symbol').innerHTML = symMap[op];
+
+            fillMatrixAuto();
+            resetSimulation();
+        }
+
+        function toggleDiceOrder() {
+            state.orderReversed = !state.orderReversed;
+            document.getElementById('swap-btn-label').innerText = state.orderReversed ? "Ordre: Dau 2 ➔ Dau 1" : "Ordre: Dau 1 ➔ Dau 2";
+            initMatrixDOM();
+        }
+
+        function selectFilterValue(val) {
+            if (state.selectedValue === val) {
+                state.selectedValue = null;
+            } else {
+                state.selectedValue = val;
+            }
+            updateMatrixDOM();
+            renderSelectors();
+            updateInfoCard();
+        }
+
+        function renderSelectors() {
+            const container = document.getElementById('sum-selector-buttons');
+            container.innerHTML = '';
+            const possible = getPossibleValues(state.operation);
+
+            possible.forEach(val => {
+                const btn = document.createElement('button');
+                const isSelected = state.selectedValue === val;
+                btn.className = isSelected 
+                    ? "py-1.5 px-1 rounded-lg text-xs font-black bg-amber-500 text-white border border-amber-600 shadow-md transition-all scale-105" 
+                    : "py-1.5 px-1 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-pcmat-soft hover:text-pcmat-dark transition-all";
+                btn.innerText = val;
+                btn.onclick = () => selectFilterValue(val);
+                container.appendChild(btn);
+            });
+        }
+
+        function updateInfoCard() {
+            const title = document.getElementById('info-card-title');
+            const desc = document.getElementById('info-card-desc');
+            const badge = document.getElementById('info-probability-badge');
+
+            if (state.selectedValue === null) {
+                title.innerText = "Anàlisi d'un Esdeveniment";
+                desc.innerHTML = "Clica qualsevol casella de la matriu o un botó inferior per conèixer la seva probabilitat de Laplace.";
+                badge.innerText = "- / 36";
+                badge.className = "px-3 py-1 rounded-full text-xs font-black bg-slate-100 border border-slate-300 text-slate-700";
+            } else {
+                const theoretical = getTheoreticalCounts(state.operation);
+                const count = theoretical[state.selectedValue] || 0;
+                const pct = ((count / 36) * 100).toFixed(1);
+
+                title.innerText = `Resultat: ${state.selectedValue}`;
+                desc.innerHTML = `Hi ha <strong>${count} de 36</strong> combinacions possibles que donen com a resultat <strong>${state.selectedValue}</strong>.<br>Probabilitat teòrica de Laplace: <strong>${pct}%</strong>.`;
+                badge.innerText = `${count} / 36 (${pct}%)`;
+                badge.className = "px-3 py-1 rounded-full text-xs font-black bg-amber-100 border border-amber-300 text-amber-900";
+            }
+        }
+
+        function renderHistogram() {
+            const container = document.getElementById('histogram-container');
+            container.innerHTML = '';
+            
+            const possible = getPossibleValues(state.operation);
+            const theoretical = getTheoreticalCounts(state.operation);
+            
+            let maxCount = 6;
+            possible.forEach(v => {
+                if (theoretical[v] > maxCount) maxCount = theoretical[v];
+            });
+
+            possible.forEach(val => {
+                const theoCount = theoretical[val] || 0;
+                const theoPct = (theoCount / 36);
+                
+                const expCount = state.simCounts[val] || 0;
+                const expPct = state.simTotal > 0 ? (expCount / state.simTotal) : 0;
+
+                const theoHeight = (theoPct / (maxCount/36)) * 100;
+                const expHeight = (expPct / (maxCount/36)) * 100;
+
+                const col = document.createElement('div');
+                col.className = "flex-1 flex flex-col items-center h-full justify-end group relative";
+
+                col.innerHTML = `
+                    <div class="w-full flex items-end justify-center gap-0.5 h-full min-h-[100px] relative">
+                        <div class="w-1/2 bg-pcmat/80 rounded-t transition-all duration-300 relative" style="height: ${Math.max(theoHeight, 2)}%" title="Teòric: ${theoCount}/36"></div>
+                        <div class="w-1/2 bg-amber-500 rounded-t transition-all duration-300 relative" style="height: ${Math.max(expHeight, 2)}%" title="Experimental: ${expCount} (${(expPct*100).toFixed(1)}%)"></div>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-600 mt-1">${val}</span>
+                `;
+                container.appendChild(col);
+            });
+
+            updateConvergenceMetrics();
+        }
+
+        function updateConvergenceMetrics() {
+            const badge = document.getElementById('convergence-badge');
+            const maeDisplay = document.getElementById('mae-error-display');
+            const hintText = document.getElementById('pedagogical-hint-text');
+
+            if (state.simTotal === 0) {
+                badge.innerText = "Inicia la simulació";
+                badge.className = "px-2.5 py-1 rounded-full text-[10px] font-bold border bg-slate-100 text-slate-600";
+                maeDisplay.innerText = "Error mitjà: -";
+                return;
+            }
+
+            const possible = getPossibleValues(state.operation);
+            const theoretical = getTheoreticalCounts(state.operation);
+            let totalDiff = 0;
+
+            possible.forEach(val => {
+                const theoProb = theoretical[val] / 36;
+                const expProb = (state.simCounts[val] || 0) / state.simTotal;
+                totalDiff += Math.abs(theoProb - expProb);
+            });
+
+            const mae = (totalDiff / possible.length) * 100;
+            maeDisplay.innerText = `Error mitjà: ${mae.toFixed(2)}%`;
+
+            if (state.simTotal < 50) {
+                badge.innerText = "Mostra petita (Alta variància)";
+                badge.className = "px-2.5 py-1 rounded-full text-[10px] font-bold border bg-rose-100 text-rose-800 border-rose-300";
+                hintText.innerHTML = `<strong class="text-slate-900 block">Llei dels Grans Nombres (<i>N</i> baix):</strong> Amb només <strong>${state.simTotal} tirades</strong>, les diferències entre les barres taronges (experiment) i verdes (teoria) són naturals a causa de la variabilitat de l'atzar.`;
+            } else if (state.simTotal < 500) {
+                badge.innerText = "Convergència mitjana";
+                badge.className = "px-2.5 py-1 rounded-full text-[10px] font-bold border bg-amber-100 text-amber-800 border-amber-300";
+                hintText.innerHTML = `<strong class="text-slate-900 block">Tendència cap a la teoria:</strong> En augmentar les tirades a <strong>${state.simTotal}</strong>, la distribució experimental comença a adoptar la forma teòrica.`;
+            } else {
+                badge.innerText = "Alta convergència! ✨";
+                badge.className = "px-2.5 py-1 rounded-full text-[10px] font-bold border bg-emerald-100 text-emerald-800 border-emerald-300";
+                hintText.innerHTML = `<strong class="text-slate-900 block">Demostració Llei dels Grans Nombres (<i>N</i> = ${state.simTotal}):</strong> Amb un nombre elevat de repeticions, la freqüència relativa experimental coincideix gairebé exactament amb la probabilitat teòrica de Laplace!`;
+            }
+        }
+
+        function rollDice(count = 1) {
+            let lastD1 = 1, lastD2 = 1, lastVal = 2;
+
+            for (let i = 0; i < count; i++) {
+                const d1 = Math.floor(Math.random() * 6) + 1;
+                const d2 = Math.floor(Math.random() * 6) + 1;
+                const val = calculateValue(d1, d2, state.operation);
+
+                state.simCounts[val] = (state.simCounts[val] || 0) + 1;
+                state.simTotal++;
+
+                lastD1 = d1;
+                lastD2 = d2;
+                lastVal = val;
+            }
+
+            const die1 = document.getElementById('die-1-display');
+            const die2 = document.getElementById('die-2-display');
+            const dieSum = document.getElementById('die-sum-display');
+
+            if (count === 1) {
+                die1.classList.add('rolling');
+                die2.classList.add('rolling');
+
+                setTimeout(() => {
+                    die1.classList.remove('rolling');
+                    die2.classList.remove('rolling');
+                    die1.innerText = DICE_FACES[lastD1 - 1];
+                    die2.innerText = DICE_FACES[lastD2 - 1];
+                    dieSum.innerText = lastVal;
+                }, 200);
+            } else {
+                die1.innerText = DICE_FACES[lastD1 - 1];
+                die2.innerText = DICE_FACES[lastD2 - 1];
+                dieSum.innerText = lastVal;
+            }
+
+            document.getElementById('sim-total-count').innerText = `${state.simTotal.toLocaleString()} tirades`;
+            renderHistogram();
+        }
+
+        function toggleAutoRoll() {
+            const btn = document.getElementById('btn-auto-roll');
+            if (state.autoRolling) {
+                clearInterval(state.autoRollTimer);
+                state.autoRolling = false;
+                btn.innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Auto`;
+                btn.className = "glass-button py-1.5 rounded-xl text-xs font-bold text-pcmat-dark flex items-center justify-center gap-1 bg-pcmat-soft border-pcmat-border";
+            } else {
+                state.autoRolling = true;
+                btn.innerHTML = `<i class="fa-solid fa-pause text-[10px]"></i> Parar`;
+                btn.className = "glass-button py-1.5 rounded-xl text-xs font-bold text-rose-700 flex items-center justify-center gap-1 bg-rose-100 border-rose-300";
+                state.autoRollTimer = setInterval(() => {
+                    rollDice(50);
+                }, 100);
+            }
+        }
+
+        function resetSimulation() {
+            if (state.autoRolling) toggleAutoRoll();
+            state.simTotal = 0;
+            state.simCounts = {};
+            document.getElementById('sim-total-count').innerText = "0 tirades";
+            document.getElementById('die-1-display').innerText = '⚀';
+            document.getElementById('die-2-display').innerText = '⚀';
+            document.getElementById('die-sum-display').innerText = calculateValue(1, 1, state.operation);
+            renderHistogram();
+        }
+
+        function togglePedagogyModal() {
+            const modal = document.getElementById('pedagogy-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initMatrixDOM();
+            fillMatrixAuto();
+        });
+    </script>
+</body>
+</html>
