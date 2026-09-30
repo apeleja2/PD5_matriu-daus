@@ -14,6 +14,9 @@
     <!-- Canvas Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+    <!-- MathJax for rendering mathematical expressions -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -244,24 +247,24 @@
                 <div class="w-full mt-4 p-3 bg-pcmat-soft/80 rounded-2xl border border-pcmat-border text-xs text-slate-700 flex items-start gap-2.5 shadow-sm">
                     <i class="fa-solid fa-circle-info text-pcmat text-base shrink-0 mt-0.5"></i>
                     <div>
-                        <strong class="text-pcmat-dark font-bold">L'Espai Mostral ($E$):</strong> 
-                        <span>Cada casella de la matriu $6 \times 6$ és un resultat possible igualment probable ($\frac{1}{36}$). En comptar quantes vegades es repeteix un valor, calculem la seva <strong>probabilitat teòrica (Laplace)</strong>.</span>
+                        <strong class="text-pcmat-dark font-bold">L'Espai Mostral (<i>E</i>):</strong> 
+                        <span>Cada casella de la matriu 6 &times; 6 és un resultat possible igualment probable (&frac13;&frac61; o 1/36). En comptar quantes vegades es repeteix un valor, calculem la seva <strong>probabilitat teòrica (Laplace)</strong>.</span>
                     </div>
                 </div>
 
                 <!-- Heatmap Legend -->
                 <div class="w-full mt-2 p-2.5 bg-white/90 rounded-2xl border border-slate-200 text-center text-[11px] text-slate-600 flex items-center justify-around flex-wrap gap-2 shadow-sm">
                     <div class="flex items-center gap-1.5">
-                        <span class="w-3 h-3 rounded-full bg-pcmat-soft border border-pcmat-border inline-block"></span> Rar ($\frac{1}{36}$)
+                        <span class="w-3 h-3 rounded-full bg-pcmat-soft border border-pcmat-border inline-block"></span> Rar (1/36)
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="w-3 h-3 rounded-full bg-emerald-300 inline-block"></span> Baixa ($\frac{2}{36}$)
+                        <span class="w-3 h-3 rounded-full bg-emerald-300 inline-block"></span> Baixa (2/36)
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span> Mitjana ($\frac{3\text{-}4}{36}$)
+                        <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span> Mitjana (3-4/36)
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="w-3 h-3 rounded-full bg-rose-500 inline-block pulse-glow"></span> Màxima 🔥 ($\frac{5\text{-}6}{36}$)
+                        <span class="w-3 h-3 rounded-full bg-rose-500 inline-block pulse-glow"></span> Màxima 🔥 (5-6/36)
                     </div>
                 </div>
             </div>
@@ -331,7 +334,7 @@
                             <i class="fa-solid fa-dice-five text-rose-500"></i>
                             <span>Simulador (Llei dels Grans Nombres)</span>
                         </h2>
-                        <p class="text-[11px] text-slate-500">Comprova com l'atzar es regula en augmentar $N$</p>
+                        <p class="text-[11px] text-slate-500">Comprova com l'atzar es regula en augmentar <i>N</i></p>
                     </div>
                     
                     <div class="flex items-center gap-2">
@@ -422,10 +425,10 @@
                 <!-- Concept 1 -->
                 <div class="bg-pcmat-soft p-3.5 rounded-2xl border border-pcmat-border">
                     <h4 class="font-extrabold text-pcmat-dark text-sm mb-1 flex items-center gap-2">
-                        <i class="fa-solid fa-table-cells"></i> 1. L'Espai Mostral ($E$) i la Regla de Laplace
+                        <i class="fa-solid fa-table-cells"></i> 1. L'Espai Mostral (<i>E</i>) i la Regla de Laplace
                     </h4>
                     <p>
-                        Quan tirem dos daus de 6 cares, tenim un total de <strong>$6 \times 6 = 36$ parelles possibles</strong>. Com que tots els resultats dels daus són igualment probables, la matriu de $6 \times 6$ representa l'espai mostral complet.
+                        Quan tirem dos daus de 6 cares, tenim un total de <strong>6 &times; 6 = 36 parelles possibles</strong>. Com que tots els resultats dels daus són igualment probables, la matriu de 6 &times; 6 representa l'espai mostral complet.
                     </p>
                     <p class="mt-1">
                         La probabilitat teòrica d'un esdeveniment es calcula amb la <strong>Regla de Laplace</strong>:
@@ -464,8 +467,8 @@
                         <i class="fa-solid fa-magnifying-glass font-bold text-amber-500"></i> Reptes d'Indagació per a l'Alumnat:
                     </h4>
                     <ul class="list-disc pl-4 space-y-1 text-slate-700">
-                        <li><strong>Suma:</strong> Per què el valor $7$ és el més freqüent? Quina forma geomètrica dibuixen les caselles del $7$ a la matriu?</li>
-                        <li><strong>Diferència:</strong> Per què la resta $(D1 - D2)$ dona valors negatius, mentre que la resta absoluta (Gran − Petit) només dona valors positius?</li>
+                        <li><strong>Suma:</strong> Per què el valor 7 és el més freqüent? Quina forma geomètrica dibuixen les caselles del 7 a la matriu?</li>
+                        <li><strong>Diferència:</strong> Per què la resta (D1 − D2) dona valors negatius, mentre que la resta absoluta (Gran − Petit) només dona valors positius?</li>
                         <li><strong>Producte:</strong> Quantes vegades surt un nombre parell vs un nombre senar a la multiplicació? Quin és més probable i per què?</li>
                     </ul>
                 </div>
@@ -954,13 +957,13 @@
 
             if (count === maxCount) {
                 badgeEl.className = "px-3 py-1 rounded-full text-xs font-black bg-rose-100 border border-rose-300 text-rose-800 shadow-sm";
-                descEl.innerHTML = `🔥 <strong>El valor ${val} és el MÉS PROBABLE!</strong> Té ${count} combinacions a la matriu. Segons Laplace, tens una probabilitat de $\\frac{${count}}{36} = ${pct}\\%$.`;
+                descEl.innerHTML = `🔥 <strong>El valor ${val} és el MÉS PROBABLE!</strong> Té ${count} combinacions a la matriu. Segons Laplace, tens una probabilitat de ${count}/36 (${pct}%).`;
             } else if (count === 1) {
                 badgeEl.className = "px-3 py-1 rounded-full text-xs font-black bg-pcmat-soft border border-pcmat-border text-pcmat-dark";
-                descEl.innerHTML = `🧊 <strong>El valor ${val} és un esdeveniment molt rar.</strong> Només té 1 cas favorable a tota la matriu ($\\frac{1}{36} \\approx 2,8\\%$).`;
+                descEl.innerHTML = `🧊 <strong>El valor ${val} és un esdeveniment molt rar.</strong> Només té 1 cas favorable a tota la matriu (1/36 &approx; 2.8%).`;
             } else {
                 badgeEl.className = "px-3 py-1 rounded-full text-xs font-black bg-amber-100 border border-amber-300 text-amber-800";
-                descEl.innerHTML = `Hi ha <strong>${count} caselles favorables</strong> que donen el resultat ${val}. Probabilitat teòrica: $\\frac{${count}}{36} = ${pct}\\%$.`;
+                descEl.innerHTML = `Hi ha <strong>${count} caselles favorables</strong> que donen el resultat ${val}. Probabilitat teòrica: ${count}/36 (${pct}%).`;
             }
         }
 
