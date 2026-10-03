@@ -13,92 +13,129 @@
     <style>
         .cell-input {
             transition: all 0.2s ease;
+            font-size: 1.25rem !important; /* Text més gran per a nens */
+            font-weight: 900 !important;
         }
         .cell-input:focus {
-            transform: scale(1.08);
-            z-index: 10;
+            transform: scale(1.15);
+            z-index: 20;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
-        /* Estils dinàmics per als eixos */
+
+        /* Estils dinàmics per als eixos de daus */
         .theme-blue {
-            background-color: #eff6ff !important;
-            border-color: #bfdbfe !important;
-            color: #1d4ed8 !important;
+            background-color: #dbeafe !important;
+            border-color: #3b82f6 !important;
+            color: #1e40af !important;
         }
         .theme-green {
-            background-color: #f0fdf4 !important;
-            border-color: #bbf7d0 !important;
-            color: #15803d !important;
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
         }
 
-        /* Escala Unificada d'Alt Contrast per Probabilitats (1/36 a 6/36) */
-        .prob-p1 { background-color: #f0f9ff !important; color: #0369a1 !important; border: 2px solid #7dd3fc !important; font-weight: 800; } /* 1/36 (~2.8%) - Cel suau */
-        .prob-p2 { background-color: #bae6fd !important; color: #0c4a6e !important; border: 2px solid #38bdf8 !important; font-weight: 800; } /* 2/36 (~5.6%) - Cel vibrant */
-        .prob-p3 { background-color: #c7d2fe !important; color: #1e1b4b !important; border: 2px solid #818cf8 !important; font-weight: 800; } /* 3/36 (~8.3%) - Blau violaci */
-        .prob-p4 { background-color: #e879f9 !important; color: #ffffff !important; border: 2px solid #c026d3 !important; font-weight: 900; } /* 4/36 (~11.1%) - Fúcsia vibrant */
-        .prob-p5 { background-color: #a855f7 !important; color: #ffffff !important; border: 2px solid #7e22ce !important; font-weight: 900; } /* 5/36 (~13.9%) - Violeta fosc */
-        .prob-p6 { background-color: #6b21a8 !important; color: #ffffff !important; border: 2px solid #4c1d95 !important; font-weight: 900; } /* 6/36+ (~16.7%) - Porpra profund */
+        /* ESCALA VISUAL D'ALT CONTRAST PER A NENS (1/36 a 6/36) */
+        /* Nivell 1: Blau Cel Suau */
+        .prob-p1 { 
+            background-color: #e0f2fe !important; 
+            color: #0369a1 !important; 
+            border: 3px solid #38bdf8 !important; 
+        } 
+        /* Nivell 2: Blau Intens */
+        .prob-p2 { 
+            background-color: #38bdf8 !important; 
+            color: #ffffff !important; 
+            border: 3px solid #0284c7 !important; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+        } 
+        /* Nivell 3: Verd Pistot / Cridaner */
+        .prob-p3 { 
+            background-color: #4ade80 !important; 
+            color: #052e16 !important; 
+            border: 3px solid #16a34a !important; 
+        } 
+        /* Nivell 4: Groc Viu */
+        .prob-p4 { 
+            background-color: #facc15 !important; 
+            color: #713f12 !important; 
+            border: 3px solid #eab308 !important; 
+        } 
+        /* Nivell 5: Taronja Intens */
+        .prob-p5 { 
+            background-color: #fb923c !important; 
+            color: #ffffff !important; 
+            border: 3px solid #ea580c !important; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+        } 
+        /* Nivell 6+: Vermell / Fúcsia Super Cridaner */
+        .prob-p6 { 
+            background-color: #e11d48 !important; 
+            color: #ffffff !important; 
+            border: 3px solid #9f1239 !important; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+        } 
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen p-3 md:p-6">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen p-2 md:p-5">
 
     <!-- Capçalera -->
-    <header class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <header class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 text-white p-3 rounded-xl text-2xl shadow-md">
+                <div class="bg-indigo-600 text-white p-3 rounded-2xl text-3xl shadow-md">
                     <i class="fa-solid fa-dice"></i>
                 </div>
                 <div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">Programa PCMat</span>
-                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">MATRIUS DE DAUS DE 6 CARES</h1>
-                    <p id="sub-title" class="text-xs text-slate-500 font-medium">Suma les dues cares dels daus (D1 + D2)</p>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">Programa PCMat</span>
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">MATRIUS DE DAUS</h1>
+                    <p id="sub-title" class="text-xs text-slate-600 font-bold">Suma les dues cares dels daus (D1 + D2)</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-3">
-                <button onclick="toggleModal('orientacions-modal')" class="flex items-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold px-3 py-2 rounded-xl transition">
-                    <i class="fa-solid fa-lightbulb text-amber-600"></i> Orientacions pel docent
+                <button onclick="toggleModal('orientacions-modal')" class="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold px-3 py-2 rounded-xl transition">
+                    <i class="fa-solid fa-lightbulb text-amber-600 text-base"></i> Guia Docent
                 </button>
-                <div class="text-right border-l pl-3 border-slate-200">
-                    <div class="text-[10px] font-bold uppercase text-slate-400">Espai Mostral</div>
-                    <div class="text-lg font-black text-slate-700">36 Casos</div>
+                <div class="text-right border-l-2 pl-3 border-slate-200">
+                    <div class="text-[10px] font-black uppercase text-slate-400">Total de Casos</div>
+                    <div class="text-xl font-black text-indigo-600">36 Caselles</div>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Contingut Principal -->
-    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5">
         
-        <!-- Panell Esquerre -->
+        <!-- Panell Esquerre (Matriu) -->
         <section class="lg:col-span-7 space-y-4">
             
             <!-- Selector d'Operació i Ordre -->
             <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-2">
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <span class="text-xs font-bold uppercase text-slate-500 flex items-center gap-1.5">
-                        <i class="fa-solid fa-calculator"></i> Operació:
+                    <span class="text-xs font-black uppercase text-slate-600 flex items-center gap-1.5">
+                        <i class="fa-solid fa-calculator text-indigo-600"></i> Què fem amb els daus?
                     </span>
                     <div class="flex flex-wrap gap-1.5 text-xs font-bold">
-                        <button id="op-suma" onclick="setOperation('suma')" class="px-3 py-1.5 rounded-lg border bg-indigo-600 text-white border-indigo-600 shadow-sm">
-                            + Suma (D1 + D2)
+                        <button id="op-suma" onclick="setOperation('suma')" class="px-3 py-2 rounded-xl border-2 bg-indigo-600 text-white border-indigo-600 shadow-sm">
+                            + Sumar
                         </button>
-                        <button id="op-dif" onclick="setOperation('dif')" class="px-3 py-1.5 rounded-lg border bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200">
-                            - Gran - Petit (Diferència)
+                        <button id="op-dif" onclick="setOperation('dif')" class="px-3 py-2 rounded-xl border-2 bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200">
+                            - Diferència
                         </button>
-                        <button id="op-resta" onclick="setOperation('resta')" class="px-3 py-1.5 rounded-lg border bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200">
-                            - Resta Directa
+                        <button id="op-resta" onclick="setOperation('resta')" class="px-3 py-2 rounded-xl border-2 bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200">
+                            - Restar
                         </button>
-                        <button id="op-mult" onclick="setOperation('mult')" class="px-3 py-1.5 rounded-lg border bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200">
-                            &times; Multiplicació (Producte)
+                        <button id="op-mult" onclick="setOperation('mult')" class="px-3 py-2 rounded-xl border-2 bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200">
+                            &times; Multiplicar
                         </button>
                     </div>
                 </div>
 
-                <!-- Selector d'ordre adaptatiu -->
+                <!-- Selector d'ordre -->
                 <div class="flex justify-end pt-2 border-t border-slate-100">
-                    <button id="btn-toggle-order" onclick="toggleOrder()" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
-                        <i class="fa-solid fa-arrow-rotate-left text-slate-500"></i> Ordre: <span id="order-label" class="font-bold text-indigo-600">Dau 1 &rarr; Dau 2</span>
+                    <button id="btn-toggle-order" onclick="toggleOrder()" class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-300">
+                        <i class="fa-solid fa-arrow-rotate-left text-indigo-600"></i> Ordre: <span id="order-label" class="font-extrabold text-indigo-600">Dau 1 &rarr; Dau 2</span>
                     </button>
                 </div>
             </div>
@@ -106,55 +143,55 @@
             <!-- Matriu de Daus -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 
-                <!-- Llegenda Visual millorada del Mapa de Calor -->
-                <div class="mb-4 p-2.5 bg-slate-100/80 rounded-xl border border-slate-200">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
-                            <i class="fa-solid fa-fire text-amber-500"></i> Escala de Probabilitat Teòrica:
+                <!-- Llegenda de colors ultra cridanera -->
+                <div class="mb-4 p-3 bg-slate-50 rounded-2xl border-2 border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-palette text-pink-500 text-sm"></i> Quin color té cada resultat?
                         </span>
-                        <span class="text-[10px] font-semibold text-slate-400">Freqüència sobre 36</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase">Probabilitat (vegades de 36)</span>
                     </div>
-                    <div class="grid grid-cols-6 gap-1 text-center text-[10px] font-bold">
-                        <div class="prob-p1 py-1 rounded-md" title="1/36 (~2.8%)">1/36<br><span class="text-[8px] font-normal opacity-80">2,8%</span></div>
-                        <div class="prob-p2 py-1 rounded-md" title="2/36 (~5.6%)">2/36<br><span class="text-[8px] font-normal opacity-80">5,6%</span></div>
-                        <div class="prob-p3 py-1 rounded-md" title="3/36 (~8.3%)">3/36<br><span class="text-[8px] font-normal opacity-80">8,3%</span></div>
-                        <div class="prob-p4 py-1 rounded-md" title="4/36 (~11.1%)">4/36<br><span class="text-[8px] font-normal opacity-90">11,1%</span></div>
-                        <div class="prob-p5 py-1 rounded-md" title="5/36 (~13.9%)">5/36<br><span class="text-[8px] font-normal opacity-90">13,9%</span></div>
-                        <div class="prob-p6 py-1 rounded-md" title="6/36+ (~16.7%)">&ge;6/36<br><span class="text-[8px] font-normal opacity-90">&ge;16,7%</span></div>
+                    <div class="grid grid-cols-6 gap-1.5 text-center text-xs font-black">
+                        <div class="prob-p1 py-1.5 rounded-xl shadow-sm" title="Molt difícil">1/36<br><span class="text-[9px] font-bold opacity-90">Raríssim</span></div>
+                        <div class="prob-p2 py-1.5 rounded-xl shadow-sm" title="Poc freqüent">2/36<br><span class="text-[9px] font-bold opacity-90">Poc</span></div>
+                        <div class="prob-p3 py-1.5 rounded-xl shadow-sm" title="Normal">3/36<br><span class="text-[9px] font-bold opacity-90">Mitjà</span></div>
+                        <div class="prob-p4 py-1.5 rounded-xl shadow-sm" title="Freqüent">4/36<br><span class="text-[9px] font-bold opacity-90">Bastant</span></div>
+                        <div class="prob-p5 py-1.5 rounded-xl shadow-sm" title="Molt freqüent">5/36<br><span class="text-[9px] font-bold opacity-90">Molt</span></div>
+                        <div class="prob-p6 py-1.5 rounded-xl shadow-sm" title="El més fàcil!">6/36+<br><span class="text-[9px] font-bold opacity-90">Super fàcil</span></div>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-between mb-3">
-                    <div id="matrix-status" class="text-xs font-bold px-2.5 py-1 rounded-md bg-amber-100 text-amber-800">
-                        En construcció (0/36)
+                    <div id="matrix-status" class="text-xs font-black px-3 py-1.5 rounded-xl bg-amber-100 text-amber-900 border border-amber-300">
+                        Comença a omplir! (0/36)
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="autoCompleteMatrix()" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-bold px-2.5 py-1 rounded-lg transition">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Completar Tot
+                        <button onclick="autoCompleteMatrix()" class="text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-black px-3 py-1.5 rounded-xl transition shadow-sm flex items-center gap-1">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Resoldre Tot
                         </button>
-                        <button onclick="clearMatrix()" class="text-xs bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 font-bold px-2.5 py-1 rounded-lg transition">
-                            <i class="fa-solid fa-rotate-left"></i> Netejar
+                        <button onclick="clearMatrix()" class="text-xs bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold px-3 py-1.5 rounded-xl transition border border-slate-300">
+                            <i class="fa-solid fa-rotate-left"></i> Esborrar
                         </button>
                     </div>
                 </div>
 
-                <!-- Taula Matriu -->
+                <!-- Taula Matriu Gran -->
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse text-center select-none">
                         <thead>
                             <tr>
-                                <th class="p-1 border border-slate-200 bg-slate-100 rounded-tl-xl text-[10px] font-bold">
+                                <th class="p-1.5 border-2 border-slate-300 bg-slate-100 rounded-tl-2xl text-[10px] font-black">
                                     <div class="flex flex-col justify-between h-full">
-                                        <span id="label-top-right" class="text-emerald-700 text-right"><i class="fa-solid fa-dice-two"></i> D2 &rarr;</span>
-                                        <span id="label-bottom-left" class="text-blue-700 text-left"><i class="fa-solid fa-dice-one"></i> D1 &darr;</span>
+                                        <span id="label-top-right" class="text-emerald-700 text-right font-extrabold"><i class="fa-solid fa-dice"></i> D2 &rarr;</span>
+                                        <span id="label-bottom-left" class="text-blue-700 text-left font-extrabold"><i class="fa-solid fa-dice"></i> D1 &darr;</span>
                                     </div>
                                 </th>
-                                <th id="col-title" colspan="6" class="p-1 border text-xs font-bold tracking-wider uppercase theme-green">
+                                <th id="col-title" colspan="6" class="p-1.5 border-2 text-xs font-black tracking-wider uppercase theme-green rounded-tr-2xl">
                                     Dau 2 (Columnes)
                                 </th>
                             </tr>
                             <tr id="col-headers">
-                                <th id="corner-label" class="p-2 border border-slate-200 bg-slate-50 text-slate-400 text-xs">D1 \ D2</th>
+                                <th id="corner-label" class="p-2 border-2 border-slate-300 bg-slate-100 text-slate-500 text-xs font-bold">D1 \ D2</th>
                             </tr>
                         </thead>
                         <tbody id="matrix-body">
@@ -164,49 +201,49 @@
             </div>
         </section>
 
-        <!-- Panell Dret -->
+        <!-- Panell Dret (Anàlisi i Joc) -->
         <section class="lg:col-span-5 space-y-4">
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between mb-2">
-                    <h2 class="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-pie text-indigo-600"></i> Anàlisi d'un Esdeveniment
+                    <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass text-indigo-600"></i> Quina probabilitat té?
                     </h2>
-                    <span id="selected-val-badge" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-500">- / 36</span>
+                    <span id="selected-val-badge" class="text-xs font-black px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200">- / 36</span>
                 </div>
-                <p class="text-xs text-slate-500 mb-3">
-                    Clica qualsevol casella de la matriu o un dels botons inferiors per conèixer la seva probabilitat teòrica de Laplace.
+                <p class="text-xs text-slate-500 font-medium mb-3">
+                    Toca qualsevol d'aquests botons per veure quantes vegades pot sortir aquest número:
                 </p>
                 <div id="val-selector" class="flex flex-wrap gap-1.5 mb-3"></div>
-                <div id="event-details" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">
-                    Selecciona un valor per veure la seva freqüència teòrica.
+                <div id="event-details" class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 text-xs text-slate-700 font-semibold">
+                    Tria un número per investigar!
                 </div>
             </div>
 
-            <!-- Simulació Experimental -->
+            <!-- Simulació d'Atzar -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        <i class="fa-solid fa-flask text-indigo-600"></i> Distribució: Teoria vs Experiment
+                    <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-dice-d6 text-indigo-600"></i> Llancem els daus!
                     </h2>
-                    <span id="sim-count" class="text-xs font-bold text-slate-500">Sense dades suficients</span>
+                    <span id="sim-count" class="text-xs font-bold text-slate-500">0 Tirades</span>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 mb-3">
-                    <button onclick="runSimulation(1)" class="py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-xl border border-indigo-200 text-xs transition">
+                    <button onclick="runSimulation(1)" class="py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold rounded-xl border border-indigo-200 text-xs transition">
                         +1 Tirada
                     </button>
-                    <button onclick="runSimulation(100)" class="py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-xl border border-indigo-200 text-xs transition">
-                        +100 Tirades
+                    <button onclick="runSimulation(50)" class="py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold rounded-xl border border-indigo-200 text-xs transition">
+                        +50 Tirades
                     </button>
-                    <button onclick="runSimulation(1000)" class="py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition shadow-sm">
-                        +1.000 Tirades
+                    <button onclick="runSimulation(500)" class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs transition shadow-sm">
+                        +500 Tirades
                     </button>
                 </div>
 
                 <div class="space-y-1">
-                    <div id="histogram-container" class="h-44 flex items-end justify-between gap-1 pt-4 pb-1 border-b border-slate-200"></div>
-                    <button onclick="resetSimulation()" class="w-full mt-2 py-1.5 text-xs text-slate-400 hover:text-slate-600 font-semibold transition">
-                        Reiniciar simulació
+                    <div id="histogram-container" class="h-40 flex items-end justify-between gap-1 pt-4 pb-1 border-b-2 border-slate-200"></div>
+                    <button onclick="resetSimulation()" class="w-full mt-2 py-1.5 text-xs text-slate-400 hover:text-slate-600 font-bold transition">
+                        Reiniciar tirades
                     </button>
                 </div>
             </div>
@@ -214,27 +251,27 @@
     </main>
 
     <!-- Modal d'Orientacions -->
-    <div id="orientacions-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+    <div id="orientacions-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-4 border-b pb-3">
-                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-lightbulb text-amber-500"></i> Orientacions pel docent i PCMat
+                <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i> Orientacions Pedagògiques (PCMat)
                 </h3>
                 <button onclick="toggleModal('orientacions-modal')" class="text-slate-400 hover:text-slate-600 text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
-                <p class="font-semibold text-slate-800">Com treballar aquesta activitat a l'aula:</p>
-                <ul class="list-disc pl-4 space-y-1.5">
-                    <li><strong>Escala d'Alt Contrast:</strong> S'assignen tons progressius d'alt contrast (blau marí &rarr; fúcsia &rarr; porpra fosc) segons el nombre de casos afavoridors sobre 36.</li>
-                    <li><strong>Diferenciació de daus:</strong> El primer dau de l'operació es mostra en <span class="text-blue-700 font-bold">blau</span> i el segon en <span class="text-emerald-700 font-bold">verd</span>.</li>
-                    <li><strong>Canvi d'ordre:</strong> Utilitza el botó d'ordre per commutar entre $D1 \rightarrow D2$ i $D2 \rightarrow D1$. Observa com s'intercanvien els colors i les etiquetes dels eixos.</li>
+            <div class="space-y-3 text-xs text-slate-600 leading-relaxed font-medium">
+                <p class="font-bold text-slate-800">Aspectes clau de la matriu visual adaptada:</p>
+                <ul class="list-disc pl-4 space-y-2">
+                    <li><strong>Colors Semafòrics d'Alt Contrast:</strong> La gradació utilitza tons primaris molt ben diferenciats (Blau cel &rarr; Blau fort &rarr; Verd &rarr; Groc &rarr; Taronja &rarr; Vermell) per facilitar la identificació visual immediata dels nens.</li>
+                    <li><strong>Completament Pintat:</strong> La cel·la s'omple 100% de color per fixar el concepte de "frequència d'aparició".</li>
+                    <li><strong>Diferenciació d'Eixos:</strong> El Dau 1 manté el codi de color <span class="text-blue-700 font-bold">Blau</span> i el Dau 2 el <span class="text-emerald-700 font-bold">Verd</span>.</li>
                 </ul>
             </div>
-            <div class="mt-5 text-right">
-                <button onclick="toggleModal('orientacions-modal')" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition">
-                    Entesos
+            <div class="mt-6 text-right">
+                <button onclick="toggleModal('orientacions-modal')" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-700 transition">
+                    Entès, gràcies!
                 </button>
             </div>
         </div>
@@ -243,7 +280,7 @@
     <!-- Codi Lògic JavaScript -->
     <script>
         let currentOp = 'suma';
-        let isDirectOrder = true; // true = D1 -> D2, false = D2 -> D1
+        let isDirectOrder = true;
         let matrixData = Array(6).fill(null).map(() => Array(6).fill(null));
         let selectedVal = null;
         let simResults = {};
@@ -270,7 +307,7 @@
             return Array.from(vals).sort((a, b) => a - b);
         }
 
-        /* Mapa de calor UNIFICAT i d'ALT CONTRAST */
+        /* Assignació de classes d'Alt Contrast */
         function getHeatmapClass(val, op) {
             let count = 0;
             for (let i = 1; i <= 6; i++) {
@@ -284,7 +321,7 @@
             if (count === 3) return 'prob-p3';
             if (count === 4) return 'prob-p4';
             if (count === 5) return 'prob-p5';
-            return 'prob-p6'; // 6 o més casos
+            return 'prob-p6'; 
         }
 
         function updateSubTitle() {
@@ -293,7 +330,7 @@
             const dSecond = isDirectOrder ? 'D2' : 'D1';
 
             if (currentOp === 'suma') subtitle.innerText = `Suma les dues cares dels daus (${dFirst} + ${dSecond})`;
-            if (currentOp === 'dif') subtitle.innerText = `Diferència absoluta entre les cares (|${dFirst} - ${dSecond}|)`;
+            if (currentOp === 'dif') subtitle.innerText = `Diferència entre les cares (${dFirst} - ${dSecond})`;
             if (currentOp === 'resta') subtitle.innerText = `Resta directa de les cares (${dFirst} - ${dSecond})`;
             if (currentOp === 'mult') subtitle.innerText = `Multiplicació de les cares (${dFirst} \u00D7 ${dSecond})`;
         }
@@ -311,25 +348,25 @@
 
             // Capçalera superior
             const colTitle = document.getElementById('col-title');
-            colTitle.className = `p-1 border text-xs font-bold tracking-wider uppercase ${colClass}`;
+            colTitle.className = `p-1.5 border-2 text-xs font-black tracking-wider uppercase ${colClass}`;
             colTitle.innerHTML = `<i class="fa-solid fa-dice mr-1"></i> ${isDirectOrder ? 'Dau 2 (Columnes)' : 'Dau 1 (Columnes)'}`;
 
             // Etiquetes cantonada
             document.getElementById('label-top-right').innerHTML = `<i class="fa-solid fa-dice"></i> ${isDirectOrder ? 'D2 \u2192' : 'D1 \u2192'}`;
-            document.getElementById('label-top-right').className = isDirectOrder ? 'text-emerald-700 text-right' : 'text-blue-700 text-right';
+            document.getElementById('label-top-right').className = isDirectOrder ? 'text-emerald-700 text-right font-black' : 'text-blue-700 text-right font-black';
             
             document.getElementById('label-bottom-left').innerHTML = `<i class="fa-solid fa-dice"></i> ${isDirectOrder ? 'D1 \u2193' : 'D2 \u2193'}`;
-            document.getElementById('label-bottom-left').className = isDirectOrder ? 'text-blue-700 text-left' : 'text-emerald-700 text-left';
+            document.getElementById('label-bottom-left').className = isDirectOrder ? 'text-blue-700 text-left font-black' : 'text-emerald-700 text-left font-black';
 
             document.getElementById('corner-label').innerText = isDirectOrder ? 'D1 \\ D2' : 'D2 \\ D1';
 
             // Capçaleres de columna
             const colHeaders = document.getElementById('col-headers');
-            colHeaders.innerHTML = `<th class="p-2 border border-slate-200 bg-slate-50 text-slate-400 text-xs">${isDirectOrder ? 'D1 \\ D2' : 'D2 \\ D1'}</th>`;
+            colHeaders.innerHTML = `<th class="p-2 border-2 border-slate-300 bg-slate-100 text-slate-500 text-xs font-bold">${isDirectOrder ? 'D1 \\ D2' : 'D2 \\ D1'}</th>`;
             const diceIcons = ['one','two','three','four','five','six'];
             for(let j=1; j<=6; j++) {
                 const th = document.createElement('th');
-                th.className = `p-2 border text-sm font-black w-12 ${colClass}`;
+                th.className = `p-2 border-2 text-base font-black w-12 ${colClass}`;
                 th.innerHTML = `<i class="fa-solid fa-dice-${diceIcons[j-1]}"></i> ${j}`;
                 colHeaders.appendChild(th);
             }
@@ -341,19 +378,19 @@
             for (let i = 1; i <= 6; i++) {
                 const tr = document.createElement('tr');
                 const th = document.createElement('th');
-                th.className = `p-2 border text-sm font-black w-12 ${rowClass}`;
+                th.className = `p-2 border-2 text-base font-black w-12 ${rowClass}`;
                 th.innerHTML = `<i class="fa-solid fa-dice-${diceIcons[i-1]}"></i> ${i}`;
                 tr.appendChild(th);
 
                 for (let j = 1; j <= 6; j++) {
                     const td = document.createElement('td');
-                    td.className = 'p-1 border border-slate-200';
+                    td.className = 'p-1 border-2 border-slate-300';
                     
                     const input = document.createElement('input');
                     input.type = 'text';
                     input.dataset.r = i - 1;
                     input.dataset.c = j - 1;
-                    input.className = 'cell-input w-10 h-10 text-center text-sm rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500';
+                    input.className = 'cell-input w-11 h-11 text-center rounded-xl border-2 border-slate-300 bg-white focus:outline-none';
                     
                     input.addEventListener('input', (e) => onCellInput(i - 1, j - 1, e.target.value));
                     td.appendChild(input);
@@ -372,9 +409,9 @@
             ['suma', 'dif', 'resta', 'mult'].forEach(o => {
                 const btn = document.getElementById(`op-${o}`);
                 if (o === op) {
-                    btn.className = 'px-3 py-1.5 rounded-lg border bg-indigo-600 text-white border-indigo-600 shadow-sm font-bold';
+                    btn.className = 'px-3 py-2 rounded-xl border-2 bg-indigo-600 text-white border-indigo-600 shadow-sm font-bold';
                 } else {
-                    btn.className = 'px-3 py-1.5 rounded-lg border bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200 font-bold';
+                    btn.className = 'px-3 py-2 rounded-xl border-2 bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 font-bold';
                 }
             });
             updateSubTitle();
@@ -396,7 +433,7 @@
             let filled = 0;
             let correct = 0;
 
-            const allProbClasses = ['prob-p1', 'prob-p2', 'prob-p3', 'prob-p4', 'prob-p5', 'prob-p6', 'bg-rose-100', 'text-rose-800', 'border-rose-300'];
+            const allProbClasses = ['prob-p1', 'prob-p2', 'prob-p3', 'prob-p4', 'prob-p5', 'prob-p6', 'bg-rose-500', 'text-white', 'border-rose-700'];
 
             const inputs = document.querySelectorAll('.cell-input');
             inputs.forEach(input => {
@@ -414,19 +451,22 @@
                         const heatmapClass = getHeatmapClass(val, currentOp);
                         input.classList.add(heatmapClass);
                     } else {
-                        input.classList.add('bg-rose-100', 'text-rose-800', 'border-rose-300');
+                        // Error visual clar
+                        input.classList.add('bg-rose-500', 'text-white', 'border-rose-700');
                     }
+                } else {
+                    input.classList.add('bg-white', 'border-slate-300');
                 }
             });
 
             const status = document.getElementById('matrix-status');
-            status.innerText = `En construcció (${filled}/36)`;
+            status.innerText = `En progrés (${filled}/36)`;
             if (filled === 36 && correct === 36) {
-                status.className = 'text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800';
-                status.innerText = 'Matriu Correcta! (36/36)';
-                try { confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } }); } catch(e){}
+                status.className = 'text-xs font-black px-3 py-1.5 rounded-xl bg-emerald-500 text-white shadow-md';
+                status.innerText = 'Molt bé! Matriu Completa! (36/36)';
+                try { confetti({ particleCount: 70, spread: 70, origin: { y: 0.7 } }); } catch(e){}
             } else {
-                status.className = 'text-xs font-bold px-2.5 py-1 rounded-md bg-amber-100 text-amber-800';
+                status.className = 'text-xs font-black px-3 py-1.5 rounded-xl bg-amber-100 text-amber-900 border border-amber-300';
             }
 
             highlightSelectedValue();
@@ -461,7 +501,7 @@
 
             vals.forEach(val => {
                 const btn = document.createElement('button');
-                btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg border bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 transition';
+                btn.className = 'px-3 py-1.5 text-xs font-black rounded-xl border-2 bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200 transition shadow-sm';
                 btn.innerText = val;
                 btn.onclick = () => selectValue(val);
                 container.appendChild(btn);
@@ -481,9 +521,9 @@
 
             const pct = ((count / 36) * 100).toFixed(1);
             document.getElementById('event-details').innerHTML = `
-                <div class="font-bold text-slate-800 mb-1">Resultat = ${val}</div>
-                <div>Casos afavoridors: <strong>${count} de 36</strong></div>
-                <div>Probabilitat teòrica: <strong>${pct}%</strong> (${count}/36)</div>
+                <div class="font-black text-indigo-900 mb-1 text-sm">Resultat investigat = ${val}</div>
+                <div>Surten <strong>${count} caselles</strong> de les 36 totals.</div>
+                <div>Probabilitat: <strong>${pct}%</strong> de possibilitats!</div>
             `;
 
             highlightSelectedValue();
@@ -497,9 +537,9 @@
                 const c = parseInt(input.dataset.c, 10);
                 const exp = getExpectedValue(r + 1, c + 1, currentOp);
                 if (exp === selectedVal) {
-                    input.classList.add('ring-4', 'ring-amber-400');
+                    input.classList.add('ring-4', 'ring-black');
                 } else {
-                    input.classList.remove('ring-4', 'ring-amber-400');
+                    input.classList.remove('ring-4', 'ring-black');
                 }
             });
         }
@@ -521,7 +561,7 @@
             totalSims = 0;
             const vals = getPossibleValues(currentOp);
             vals.forEach(v => simResults[v] = 0);
-            document.getElementById('sim-count').innerText = 'Sense dades suficients';
+            document.getElementById('sim-count').innerText = '0 Tirades';
             renderHistogram();
         }
 
@@ -557,17 +597,17 @@
                 const realPct = totalSims > 0 ? ((simResults[v] || 0) / totalSims) * 100 : 0;
 
                 const col = document.createElement('div');
-                col.className = 'flex-1 flex flex-col items-center h-full justify-end relative group';
+                col.className = 'flex-1 flex flex-col items-center h-full justify-end relative';
 
                 const barHeight = (realPct / maxPct) * 100;
                 const linePos = (expPct / maxPct) * 100;
 
                 col.innerHTML = `
-                    <div class="w-full bg-slate-100 rounded-t relative flex items-end h-full">
-                        <div class="w-full bg-emerald-500 rounded-t transition-all duration-300" style="height: ${barHeight}%;"></div>
-                        <div class="absolute w-full border-b-2 border-slate-700 z-10" style="bottom: ${linePos}%;"></div>
+                    <div class="w-full bg-slate-100 rounded-t-lg relative flex items-end h-full">
+                        <div class="w-full bg-indigo-500 rounded-t-lg transition-all duration-300" style="height: ${barHeight}%;"></div>
+                        <div class="absolute w-full border-b-2 border-rose-600 z-10" style="bottom: ${linePos}%;"></div>
                     </div>
-                    <span class="text-[10px] font-bold text-slate-600 mt-1">${v}</span>
+                    <span class="text-[11px] font-black text-slate-700 mt-1">${v}</span>
                 `;
                 container.appendChild(col);
             });
