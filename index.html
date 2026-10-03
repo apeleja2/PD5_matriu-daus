@@ -15,7 +15,7 @@
             transition: all 0.2s ease;
         }
         .cell-input:focus {
-            transform: scale(1.05);
+            transform: scale(1.08);
             z-index: 10;
         }
         /* Estils dinàmics per als eixos */
@@ -30,13 +30,13 @@
             color: #15803d !important;
         }
 
-        /* Escala Unificada de Probabilitat (1/36 a 6/36) */
-        .prob-p1 { background-color: #f0f9ff; color: #0369a1; border-color: #bae6fd; font-weight: 700; } /* 1/36 (~2.8%) */
-        .prob-p2 { background-color: #e0f2fe; color: #0284c7; border-color: #7dd3fc; font-weight: 700; } /* 2/36 (~5.6%) */
-        .prob-p3 { background-color: #e0e7ff; color: #4338ca; border-color: #a5b4fc; font-weight: 800; } /* 3/36 (~8.3%) */
-        .prob-p4 { background-color: #c7d2fe; color: #3730a3; border-color: #818cf8; font-weight: 800; } /* 4/36 (~11.1%) */
-        .prob-p5 { background-color: #f5d0fe; color: #86198f; border-color: #f0abfc; font-weight: 900; } /* 5/36 (~13.9%) */
-        .prob-p6 { background-color: #f0abfc; color: #701a75; border-color: #e879f9; font-weight: 900; } /* 6/36+ (~16.7%) */
+        /* Escala Unificada d'Alt Contrast per Probabilitats (1/36 a 6/36) */
+        .prob-p1 { background-color: #f0f9ff !important; color: #0369a1 !important; border: 2px solid #7dd3fc !important; font-weight: 800; } /* 1/36 (~2.8%) - Cel suau */
+        .prob-p2 { background-color: #bae6fd !important; color: #0c4a6e !important; border: 2px solid #38bdf8 !important; font-weight: 800; } /* 2/36 (~5.6%) - Cel vibrant */
+        .prob-p3 { background-color: #c7d2fe !important; color: #1e1b4b !important; border: 2px solid #818cf8 !important; font-weight: 800; } /* 3/36 (~8.3%) - Blau violaci */
+        .prob-p4 { background-color: #e879f9 !important; color: #ffffff !important; border: 2px solid #c026d3 !important; font-weight: 900; } /* 4/36 (~11.1%) - Fúcsia vibrant */
+        .prob-p5 { background-color: #a855f7 !important; color: #ffffff !important; border: 2px solid #7e22ce !important; font-weight: 900; } /* 5/36 (~13.9%) - Violeta fosc */
+        .prob-p6 { background-color: #6b21a8 !important; color: #ffffff !important; border: 2px solid #4c1d95 !important; font-weight: 900; } /* 6/36+ (~16.7%) - Porpra profund */
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen p-3 md:p-6">
@@ -106,22 +106,21 @@
             <!-- Matriu de Daus -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 
-                <!-- Llegenda Visual del Mapa de Calor -->
-                <div class="mb-3 p-2 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-2 text-[11px]">
-                    <span class="font-bold text-slate-600 flex items-center gap-1">
-                        <i class="fa-solid fa-fire text-amber-500"></i> Probabilitat:
-                    </span>
-                    <div class="flex items-center gap-1 flex-1 justify-end max-w-xs">
-                        <span class="text-[10px] text-slate-400 font-bold">Mín (1/36)</span>
-                        <div class="flex h-3 rounded-full overflow-hidden w-full border border-slate-200">
-                            <div class="flex-1 prob-p1" title="1/36 (~2.8%)"></div>
-                            <div class="flex-1 prob-p2" title="2/36 (~5.6%)"></div>
-                            <div class="flex-1 prob-p3" title="3/36 (~8.3%)"></div>
-                            <div class="flex-1 prob-p4" title="4/36 (~11.1%)"></div>
-                            <div class="flex-1 prob-p5" title="5/36 (~13.9%)"></div>
-                            <div class="flex-1 prob-p6" title="6/36 (~16.7%)"></div>
-                        </div>
-                        <span class="text-[10px] text-slate-400 font-bold">Màx (&ge;6/36)</span>
+                <!-- Llegenda Visual millorada del Mapa de Calor -->
+                <div class="mb-4 p-2.5 bg-slate-100/80 rounded-xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-fire text-amber-500"></i> Escala de Probabilitat Teòrica:
+                        </span>
+                        <span class="text-[10px] font-semibold text-slate-400">Freqüència sobre 36</span>
+                    </div>
+                    <div class="grid grid-cols-6 gap-1 text-center text-[10px] font-bold">
+                        <div class="prob-p1 py-1 rounded-md" title="1/36 (~2.8%)">1/36<br><span class="text-[8px] font-normal opacity-80">2,8%</span></div>
+                        <div class="prob-p2 py-1 rounded-md" title="2/36 (~5.6%)">2/36<br><span class="text-[8px] font-normal opacity-80">5,6%</span></div>
+                        <div class="prob-p3 py-1 rounded-md" title="3/36 (~8.3%)">3/36<br><span class="text-[8px] font-normal opacity-80">8,3%</span></div>
+                        <div class="prob-p4 py-1 rounded-md" title="4/36 (~11.1%)">4/36<br><span class="text-[8px] font-normal opacity-90">11,1%</span></div>
+                        <div class="prob-p5 py-1 rounded-md" title="5/36 (~13.9%)">5/36<br><span class="text-[8px] font-normal opacity-90">13,9%</span></div>
+                        <div class="prob-p6 py-1 rounded-md" title="6/36+ (~16.7%)">&ge;6/36<br><span class="text-[8px] font-normal opacity-90">&ge;16,7%</span></div>
                     </div>
                 </div>
 
@@ -228,7 +227,7 @@
             <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
                 <p class="font-semibold text-slate-800">Com treballar aquesta activitat a l'aula:</p>
                 <ul class="list-disc pl-4 space-y-1.5">
-                    <li><strong>Escala Unificada:</strong> El color s'assigna estrictament segons el nombre de casos afavoridors sobre 36. Un blau cel indica 1/36 (poques opcions) i un fúcsia intens indica &ge;6/36 (moltes opcions).</li>
+                    <li><strong>Escala d'Alt Contrast:</strong> S'assignen tons progressius d'alt contrast (blau marí &rarr; fúcsia &rarr; porpra fosc) segons el nombre de casos afavoridors sobre 36.</li>
                     <li><strong>Diferenciació de daus:</strong> El primer dau de l'operació es mostra en <span class="text-blue-700 font-bold">blau</span> i el segon en <span class="text-emerald-700 font-bold">verd</span>.</li>
                     <li><strong>Canvi d'ordre:</strong> Utilitza el botó d'ordre per commutar entre $D1 \rightarrow D2$ i $D2 \rightarrow D1$. Observa com s'intercanvien els colors i les etiquetes dels eixos.</li>
                 </ul>
@@ -271,7 +270,7 @@
             return Array.from(vals).sort((a, b) => a - b);
         }
 
-        /* Mapa de calor UNIFICAT basat en el nombre d'aparicions sobre 36 */
+        /* Mapa de calor UNIFICAT i d'ALT CONTRAST */
         function getHeatmapClass(val, op) {
             let count = 0;
             for (let i = 1; i <= 6; i++) {
@@ -280,7 +279,6 @@
                 }
             }
 
-            // Unificació directa segons la probabilitat teòrica (1 a 6+ casos afavoridors)
             if (count <= 1) return 'prob-p1';
             if (count === 2) return 'prob-p2';
             if (count === 3) return 'prob-p3';
@@ -355,7 +353,7 @@
                     input.type = 'text';
                     input.dataset.r = i - 1;
                     input.dataset.c = j - 1;
-                    input.className = 'cell-input w-10 h-10 text-center font-black text-sm rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500';
+                    input.className = 'cell-input w-10 h-10 text-center text-sm rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500';
                     
                     input.addEventListener('input', (e) => onCellInput(i - 1, j - 1, e.target.value));
                     td.appendChild(input);
@@ -499,9 +497,9 @@
                 const c = parseInt(input.dataset.c, 10);
                 const exp = getExpectedValue(r + 1, c + 1, currentOp);
                 if (exp === selectedVal) {
-                    input.classList.add('ring-2', 'ring-indigo-500');
+                    input.classList.add('ring-4', 'ring-amber-400');
                 } else {
-                    input.classList.remove('ring-2', 'ring-indigo-500');
+                    input.classList.remove('ring-4', 'ring-amber-400');
                 }
             });
         }
