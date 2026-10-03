@@ -13,7 +13,7 @@
     <style>
         .cell-input {
             transition: all 0.2s ease;
-            font-size: 1.25rem !important; /* Text més gran per a nens */
+            font-size: 1.25rem !important;
             font-weight: 900 !important;
         }
         .cell-input:focus {
@@ -34,40 +34,40 @@
             color: #166534 !important;
         }
 
-        /* ESCALA VISUAL D'ALT CONTRAST PER A NENS (1/36 a 6/36) */
-        /* Nivell 1: Blau Cel Suau */
+        /* ESCALA D'ALT CONTRAST AMB EL SEU VOCABULARI DE PROBABILITAT */
+        /* Rarament (~2.8% - 1/36) */
         .prob-p1 { 
             background-color: #e0f2fe !important; 
             color: #0369a1 !important; 
             border: 3px solid #38bdf8 !important; 
         } 
-        /* Nivell 2: Blau Intens */
+        /* De tant en tant (~5.6% - 2/36) */
         .prob-p2 { 
             background-color: #38bdf8 !important; 
             color: #ffffff !important; 
             border: 3px solid #0284c7 !important; 
             text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
         } 
-        /* Nivell 3: Verd Pistot / Cridaner */
+        /* De tant en tant (~8.3% - 3/36) */
         .prob-p3 { 
             background-color: #4ade80 !important; 
             color: #052e16 !important; 
             border: 3px solid #16a34a !important; 
         } 
-        /* Nivell 4: Groc Viu */
+        /* De tant en tant / Bastant (~11.1% - 4/36) */
         .prob-p4 { 
             background-color: #facc15 !important; 
             color: #713f12 !important; 
             border: 3px solid #eab308 !important; 
         } 
-        /* Nivell 5: Taronja Intens */
+        /* Bastant (~13.9% - 5/36) */
         .prob-p5 { 
             background-color: #fb923c !important; 
             color: #ffffff !important; 
             border: 3px solid #ea580c !important; 
             text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
         } 
-        /* Nivell 6+: Vermell / Fúcsia Super Cridaner */
+        /* Bastant / La meitat de vegades (>=16.7% - 6/36+) */
         .prob-p6 { 
             background-color: #e11d48 !important; 
             color: #ffffff !important; 
@@ -87,18 +87,18 @@
                 </div>
                 <div>
                     <span class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">Programa PCMat</span>
-                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">MATRIUS DE DAUS</h1>
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">MATRIUS DE DAUS DE 6 CARES</h1>
                     <p id="sub-title" class="text-xs text-slate-600 font-bold">Suma les dues cares dels daus (D1 + D2)</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-3">
                 <button onclick="toggleModal('orientacions-modal')" class="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold px-3 py-2 rounded-xl transition">
-                    <i class="fa-solid fa-lightbulb text-amber-600 text-base"></i> Guia Docent
+                    <i class="fa-solid fa-lightbulb text-amber-600 text-base"></i> Orientacions pel docent
                 </button>
                 <div class="text-right border-l-2 pl-3 border-slate-200">
-                    <div class="text-[10px] font-black uppercase text-slate-400">Total de Casos</div>
-                    <div class="text-xl font-black text-indigo-600">36 Caselles</div>
+                    <div class="text-[10px] font-black uppercase text-slate-400">Espai Mostral</div>
+                    <div class="text-xl font-black text-indigo-600">36 Casos</div>
                 </div>
             </div>
         </div>
@@ -114,25 +114,25 @@
             <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-2">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <span class="text-xs font-black uppercase text-slate-600 flex items-center gap-1.5">
-                        <i class="fa-solid fa-calculator text-indigo-600"></i> Què fem amb els daus?
+                        <i class="fa-solid fa-calculator text-indigo-600"></i> Operació:
                     </span>
                     <div class="flex flex-wrap gap-1.5 text-xs font-bold">
                         <button id="op-suma" onclick="setOperation('suma')" class="px-3 py-2 rounded-xl border-2 bg-indigo-600 text-white border-indigo-600 shadow-sm">
-                            + Sumar
+                            + Suma (D1 + D2)
                         </button>
                         <button id="op-dif" onclick="setOperation('dif')" class="px-3 py-2 rounded-xl border-2 bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200">
-                            - Diferència
+                            Gran - Petit (Diferència)
                         </button>
                         <button id="op-resta" onclick="setOperation('resta')" class="px-3 py-2 rounded-xl border-2 bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200">
-                            - Restar
+                            - Resta Directa
                         </button>
                         <button id="op-mult" onclick="setOperation('mult')" class="px-3 py-2 rounded-xl border-2 bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200">
-                            &times; Multiplicar
+                            &times; Multiplicació (Producte)
                         </button>
                     </div>
                 </div>
 
-                <!-- Selector d'ordre -->
+                <!-- Selector d'ordre adaptatiu -->
                 <div class="flex justify-end pt-2 border-t border-slate-100">
                     <button id="btn-toggle-order" onclick="toggleOrder()" class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-300">
                         <i class="fa-solid fa-arrow-rotate-left text-indigo-600"></i> Ordre: <span id="order-label" class="font-extrabold text-indigo-600">Dau 1 &rarr; Dau 2</span>
@@ -143,34 +143,34 @@
             <!-- Matriu de Daus -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 
-                <!-- Llegenda de colors ultra cridanera -->
+                <!-- Llegenda amb el vocabulari de probabilitat de l'aula -->
                 <div class="mb-4 p-3 bg-slate-50 rounded-2xl border-2 border-slate-200">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                            <i class="fa-solid fa-palette text-pink-500 text-sm"></i> Quin color té cada resultat?
+                            <i class="fa-solid fa-palette text-pink-500 text-sm"></i> Escala de Probabilitat Teòrica:
                         </span>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase">Probabilitat (vegades de 36)</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase">Freqüència sobre 36</span>
                     </div>
                     <div class="grid grid-cols-6 gap-1.5 text-center text-xs font-black">
-                        <div class="prob-p1 py-1.5 rounded-xl shadow-sm" title="Molt difícil">1/36<br><span class="text-[9px] font-bold opacity-90">Raríssim</span></div>
-                        <div class="prob-p2 py-1.5 rounded-xl shadow-sm" title="Poc freqüent">2/36<br><span class="text-[9px] font-bold opacity-90">Poc</span></div>
-                        <div class="prob-p3 py-1.5 rounded-xl shadow-sm" title="Normal">3/36<br><span class="text-[9px] font-bold opacity-90">Mitjà</span></div>
-                        <div class="prob-p4 py-1.5 rounded-xl shadow-sm" title="Freqüent">4/36<br><span class="text-[9px] font-bold opacity-90">Bastant</span></div>
-                        <div class="prob-p5 py-1.5 rounded-xl shadow-sm" title="Molt freqüent">5/36<br><span class="text-[9px] font-bold opacity-90">Molt</span></div>
-                        <div class="prob-p6 py-1.5 rounded-xl shadow-sm" title="El més fàcil!">6/36+<br><span class="text-[9px] font-bold opacity-90">Super fàcil</span></div>
+                        <div class="prob-p1 py-1.5 rounded-xl shadow-sm" title="Rarament (1/36)">1/36<br><span class="text-[8px] font-extrabold uppercase opacity-90">Rarament</span><br><span class="text-[8px] font-normal opacity-80">2,8%</span></div>
+                        <div class="prob-p2 py-1.5 rounded-xl shadow-sm" title="Rarament / De tant en tant (2/36)">2/36<br><span class="text-[8px] font-extrabold uppercase opacity-90">Rarament</span><br><span class="text-[8px] font-normal opacity-80">5,6%</span></div>
+                        <div class="prob-p3 py-1.5 rounded-xl shadow-sm" title="De tant en tant (3/36)">3/36<br><span class="text-[8px] font-extrabold uppercase opacity-90">De tant en tant</span><br><span class="text-[8px] font-normal opacity-80">8,3%</span></div>
+                        <div class="prob-p4 py-1.5 rounded-xl shadow-sm" title="De tant en tant (4/36)">4/36<br><span class="text-[8px] font-extrabold uppercase opacity-90">De tant en tant</span><br><span class="text-[8px] font-normal opacity-80">11,1%</span></div>
+                        <div class="prob-p5 py-1.5 rounded-xl shadow-sm" title="De tant en tant / Bastant (5/36)">5/36<br><span class="text-[8px] font-extrabold uppercase opacity-90">Bastant</span><br><span class="text-[8px] font-normal opacity-80">13,9%</span></div>
+                        <div class="prob-p6 py-1.5 rounded-xl shadow-sm" title="Bastant (6/36+)">6/36+<br><span class="text-[8px] font-extrabold uppercase opacity-90">Bastant</span><br><span class="text-[8px] font-normal opacity-80">&ge;16,7%</span></div>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-between mb-3">
                     <div id="matrix-status" class="text-xs font-black px-3 py-1.5 rounded-xl bg-amber-100 text-amber-900 border border-amber-300">
-                        Comença a omplir! (0/36)
+                        En construcció (0/36)
                     </div>
                     <div class="flex gap-2">
                         <button onclick="autoCompleteMatrix()" class="text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-black px-3 py-1.5 rounded-xl transition shadow-sm flex items-center gap-1">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Resoldre Tot
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Completar Tot
                         </button>
                         <button onclick="clearMatrix()" class="text-xs bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold px-3 py-1.5 rounded-xl transition border border-slate-300">
-                            <i class="fa-solid fa-rotate-left"></i> Esborrar
+                            <i class="fa-solid fa-rotate-left"></i> Netejar
                         </button>
                     </div>
                 </div>
@@ -201,49 +201,49 @@
             </div>
         </section>
 
-        <!-- Panell Dret (Anàlisi i Joc) -->
+        <!-- Panell Dret -->
         <section class="lg:col-span-5 space-y-4">
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between mb-2">
                     <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-magnifying-glass text-indigo-600"></i> Quina probabilitat té?
+                        <i class="fa-solid fa-magnifying-glass text-indigo-600"></i> Anàlisi d'un Esdeveniment
                     </h2>
                     <span id="selected-val-badge" class="text-xs font-black px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200">- / 36</span>
                 </div>
                 <p class="text-xs text-slate-500 font-medium mb-3">
-                    Toca qualsevol d'aquests botons per veure quantes vegades pot sortir aquest número:
+                    Clica qualsevol casella o un dels botons per conèixer la seva probabilitat teòrica de Laplace:
                 </p>
                 <div id="val-selector" class="flex flex-wrap gap-1.5 mb-3"></div>
                 <div id="event-details" class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 text-xs text-slate-700 font-semibold">
-                    Tria un número per investigar!
+                    Selecciona un valor per veure la seva freqüència i qualificació de probabilitat.
                 </div>
             </div>
 
-            <!-- Simulació d'Atzar -->
+            <!-- Simulació Experimental -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="text-sm font-black text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-dice-d6 text-indigo-600"></i> Llancem els daus!
+                        <i class="fa-solid fa-flask text-indigo-600"></i> Distribució: Teoria vs Experiment
                     </h2>
-                    <span id="sim-count" class="text-xs font-bold text-slate-500">0 Tirades</span>
+                    <span id="sim-count" class="text-xs font-bold text-slate-500">Sense dades suficients</span>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 mb-3">
                     <button onclick="runSimulation(1)" class="py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold rounded-xl border border-indigo-200 text-xs transition">
                         +1 Tirada
                     </button>
-                    <button onclick="runSimulation(50)" class="py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold rounded-xl border border-indigo-200 text-xs transition">
-                        +50 Tirades
+                    <button onclick="runSimulation(100)" class="py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold rounded-xl border border-indigo-200 text-xs transition">
+                        +100 Tirades
                     </button>
-                    <button onclick="runSimulation(500)" class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs transition shadow-sm">
-                        +500 Tirades
+                    <button onclick="runSimulation(1000)" class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs transition shadow-sm">
+                        +1.000 Tirades
                     </button>
                 </div>
 
                 <div class="space-y-1">
                     <div id="histogram-container" class="h-40 flex items-end justify-between gap-1 pt-4 pb-1 border-b-2 border-slate-200"></div>
                     <button onclick="resetSimulation()" class="w-full mt-2 py-1.5 text-xs text-slate-400 hover:text-slate-600 font-bold transition">
-                        Reiniciar tirades
+                        Reiniciar simulació
                     </button>
                 </div>
             </div>
@@ -255,23 +255,23 @@
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-4 border-b pb-3">
                 <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i> Orientacions Pedagògiques (PCMat)
+                    <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i> Orientacions pel docent i PCMat
                 </h3>
                 <button onclick="toggleModal('orientacions-modal')" class="text-slate-400 hover:text-slate-600 text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div class="space-y-3 text-xs text-slate-600 leading-relaxed font-medium">
-                <p class="font-bold text-slate-800">Aspectes clau de la matriu visual adaptada:</p>
+                <p class="font-bold text-slate-800">Com treballar aquesta activitat a l'aula:</p>
                 <ul class="list-disc pl-4 space-y-2">
-                    <li><strong>Colors Semafòrics d'Alt Contrast:</strong> La gradació utilitza tons primaris molt ben diferenciats (Blau cel &rarr; Blau fort &rarr; Verd &rarr; Groc &rarr; Taronja &rarr; Vermell) per facilitar la identificació visual immediata dels nens.</li>
-                    <li><strong>Completament Pintat:</strong> La cel·la s'omple 100% de color per fixar el concepte de "frequència d'aparició".</li>
-                    <li><strong>Diferenciació d'Eixos:</strong> El Dau 1 manté el codi de color <span class="text-blue-700 font-bold">Blau</span> i el Dau 2 el <span class="text-emerald-700 font-bold">Verd</span>.</li>
+                    <li><strong>Escala lingüística d'aula:</strong> S'utilitzen els termes habituals de probabilitat (Mai 0%, Rarament 5-10%, De tant en tant 20-30%, La meitat 50%, Bastant 70%, Gairebé sempre 90%, Sempre 100%).</li>
+                    <li><strong>Diferenciació de daus:</strong> El primer dau de l'operació es mostra en <span class="text-blue-700 font-bold">blau</span> i el segon en <span class="text-emerald-700 font-bold">verd</span>.</li>
+                    <li><strong>Canvi d'ordre:</strong> Utilitza el botó d'ordre per commutar entre $D1 \rightarrow D2$ i $D2 \rightarrow D1$. Observa com s'intercanvien els colors i les etiquetes dels eixos.</li>
                 </ul>
             </div>
             <div class="mt-6 text-right">
                 <button onclick="toggleModal('orientacions-modal')" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-700 transition">
-                    Entès, gràcies!
+                    Entesos
                 </button>
             </div>
         </div>
@@ -307,7 +307,18 @@
             return Array.from(vals).sort((a, b) => a - b);
         }
 
-        /* Assignació de classes d'Alt Contrast */
+        /* Classificació lingüística basat en el percentatge real */
+        function getProbabilityLabel(pct) {
+            if (pct === 0) return 'Mai (0%)';
+            if (pct > 0 && pct <= 8) return 'Rarament (5-10%)';
+            if (pct > 8 && pct < 40) return 'De tant en tant (20-30%)';
+            if (pct >= 40 && pct <= 60) return 'La meitat de vegades (50%)';
+            if (pct > 60 && pct <= 85) return 'Bastant (70%)';
+            if (pct > 85 && pct < 100) return 'Gairebé sempre (90%)';
+            if (pct === 100) return 'Sempre (100%)';
+            return 'De tant en tant';
+        }
+
         function getHeatmapClass(val, op) {
             let count = 0;
             for (let i = 1; i <= 6; i++) {
@@ -330,7 +341,7 @@
             const dSecond = isDirectOrder ? 'D2' : 'D1';
 
             if (currentOp === 'suma') subtitle.innerText = `Suma les dues cares dels daus (${dFirst} + ${dSecond})`;
-            if (currentOp === 'dif') subtitle.innerText = `Diferència entre les cares (${dFirst} - ${dSecond})`;
+            if (currentOp === 'dif') subtitle.innerText = `Diferència entre el dau més gran i el més petit`;
             if (currentOp === 'resta') subtitle.innerText = `Resta directa de les cares (${dFirst} - ${dSecond})`;
             if (currentOp === 'mult') subtitle.innerText = `Multiplicació de les cares (${dFirst} \u00D7 ${dSecond})`;
         }
@@ -451,7 +462,6 @@
                         const heatmapClass = getHeatmapClass(val, currentOp);
                         input.classList.add(heatmapClass);
                     } else {
-                        // Error visual clar
                         input.classList.add('bg-rose-500', 'text-white', 'border-rose-700');
                     }
                 } else {
@@ -460,10 +470,10 @@
             });
 
             const status = document.getElementById('matrix-status');
-            status.innerText = `En progrés (${filled}/36)`;
+            status.innerText = `En construcció (${filled}/36)`;
             if (filled === 36 && correct === 36) {
                 status.className = 'text-xs font-black px-3 py-1.5 rounded-xl bg-emerald-500 text-white shadow-md';
-                status.innerText = 'Molt bé! Matriu Completa! (36/36)';
+                status.innerText = 'Matriu Correcta! (36/36)';
                 try { confetti({ particleCount: 70, spread: 70, origin: { y: 0.7 } }); } catch(e){}
             } else {
                 status.className = 'text-xs font-black px-3 py-1.5 rounded-xl bg-amber-100 text-amber-900 border border-amber-300';
@@ -519,11 +529,17 @@
                 }
             }
 
-            const pct = ((count / 36) * 100).toFixed(1);
+            const pctNum = ((count / 36) * 100);
+            const pct = pctNum.toFixed(1);
+            const labelText = getProbabilityLabel(pctNum);
+
             document.getElementById('event-details').innerHTML = `
-                <div class="font-black text-indigo-900 mb-1 text-sm">Resultat investigat = ${val}</div>
-                <div>Surten <strong>${count} caselles</strong> de les 36 totals.</div>
-                <div>Probabilitat: <strong>${pct}%</strong> de possibilitats!</div>
+                <div class="font-black text-indigo-900 mb-1 text-sm">Resultat = ${val}</div>
+                <div>Casos afavoridors: <strong>${count} de 36</strong></div>
+                <div>Probabilitat teòrica: <strong>${pct}%</strong> (${count}/36)</div>
+                <div class="mt-2 text-indigo-700 font-extrabold uppercase bg-indigo-100/70 p-1.5 rounded-lg text-center">
+                    Qualificació: ${labelText}
+                </div>
             `;
 
             highlightSelectedValue();
@@ -561,7 +577,7 @@
             totalSims = 0;
             const vals = getPossibleValues(currentOp);
             vals.forEach(v => simResults[v] = 0);
-            document.getElementById('sim-count').innerText = '0 Tirades';
+            document.getElementById('sim-count').innerText = 'Sense dades suficients';
             renderHistogram();
         }
 
