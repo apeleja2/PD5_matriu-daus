@@ -18,7 +18,7 @@
             transform: scale(1.05);
             z-index: 10;
         }
-        /* Estils dinàmics per als dos daus */
+        /* Estils dinàmics per als eixos */
         .theme-blue {
             background-color: #eff6ff !important;
             border-color: #bfdbfe !important;
@@ -128,11 +128,9 @@
                             </tr>
                             <tr id="col-headers">
                                 <th id="corner-label" class="p-2 border border-slate-200 bg-slate-50 text-slate-400 text-xs">D1 \ D2</th>
-                                <!-- Generat per JS -->
                             </tr>
                         </thead>
                         <tbody id="matrix-body">
-                            <!-- Generat per JS -->
                         </tbody>
                     </table>
                 </div>
@@ -203,7 +201,8 @@
                 <p class="font-semibold text-slate-800">Com treballar aquesta activitat a l'aula:</p>
                 <ul class="list-disc pl-4 space-y-1.5">
                     <li><strong>Diferenciació de daus:</strong> El primer dau de l'operació es mostra en <span class="text-blue-700 font-bold">blau</span> i el segon en <span class="text-emerald-700 font-bold">verd</span>.</li>
-                    <li><strong>Canvi d'ordre:</strong> Utilitza el botó d'ordre per commutar entre $D1 \rightarrow D2$ i $D2 \rightarrow D1$. Observa com s'intercanvien els colors i les etiquetes a les files i columnes.</li>
+                    <li><strong>Mapa de calor integral:</strong> Totes les cel·les es tenyeixen segons la seva probabilitat exacta (del blau/cel clar per als esdeveniments rars fins al violeta/fúcsia per als més freqüents).</li>
+                    <li><strong>Canvi d'ordre:</strong> Utilitza el botó d'ordre per commutar entre $D1 \rightarrow D2$ i $D2 \rightarrow D1$. Observa com s'intercanvien els colors i les etiquetes dels eixos.</li>
                 </ul>
             </div>
             <div class="mt-5 text-right">
@@ -242,6 +241,29 @@
                 }
             }
             return Array.from(vals).sort((a, b) => a - b);
+        }
+
+        /* Mapa de calor integrat i adaptatiu per a TOTS els valors/freqüències */
+        function getHeatmapClass(val, op) {
+            let count = 0;
+            for (let i = 1; i <= 6; i++) {
+                for (let j = 1; j <= 6; j++) {
+                    if (getExpectedValue(i, j, op) === val) count++;
+                }
+            }
+
+            // Escala de colors segons el nombre exacte de casos afavoridors (d'1 a 10)
+            switch (count) {
+                case 1: return 'bg-sky-100 text-sky-900 border-sky-300 font-extrabold';
+                case 2: return 'bg-cyan-100 text-cyan-900 border-cyan-300 font-extrabold';
+                case 3: return 'bg-teal-100 text-teal-900 border-teal-300 font-extrabold';
+                case 4: return 'bg-emerald-100 text-emerald-900 border-emerald-300 font-extrabold';
+                case 5: return 'bg-amber-100 text-amber-900 border-amber-300 font-extrabold';
+                case 6: return 'bg-orange-100 text-orange-900 border-orange-300 font-extrabold';
+                case 8: return 'bg-rose-100 text-rose-900 border-rose-300 font-extrabold';
+                case 10: return 'bg-purple-100 text-purple-900 border-purple-300 font-extrabold';
+                default: return 'bg-indigo-100 text-indigo-900 border-indigo-300 font-extrabold';
+            }
         }
 
         function updateSubTitle() {
@@ -353,6 +375,19 @@
             let filled = 0;
             let correct = 0;
 
+            const allHeatmapClasses = [
+                'bg-sky-100', 'text-sky-900', 'border-sky-300',
+                'bg-cyan-100', 'text-cyan-900', 'border-cyan-300',
+                'bg-teal-100', 'text-teal-900', 'border-teal-300',
+                'bg-emerald-100', 'text-emerald-900', 'border-emerald-300',
+                'bg-amber-100', 'text-amber-900', 'border-amber-300',
+                'bg-orange-100', 'text-orange-900', 'border-orange-300',
+                'bg-rose-100', 'text-rose-900', 'border-rose-300',
+                'bg-purple-100', 'text-purple-900', 'border-purple-300',
+                'bg-indigo-100', 'text-indigo-900', 'border-indigo-300',
+                'bg-rose-100', 'text-rose-800', 'border-rose-300'
+            ];
+
             const inputs = document.querySelectorAll('.cell-input');
             inputs.forEach(input => {
                 const r = parseInt(input.dataset.r, 10);
@@ -360,13 +395,14 @@
                 const val = matrixData[r][c];
                 const expected = getExpectedValue(r + 1, c + 1, currentOp);
 
-                input.classList.remove('bg-emerald-100', 'text-emerald-800', 'border-emerald-300', 'bg-rose-100', 'text-rose-800', 'border-rose-300');
+                input.classList.remove(...allHeatmapClasses);
 
                 if (val !== null) {
                     filled++;
                     if (val === expected) {
                         correct++;
-                        input.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
+                        const heatmapClass = getHeatmapClass(val, currentOp);
+                        input.classList.add(...heatmapClass.split(' '));
                     } else {
                         input.classList.add('bg-rose-100', 'text-rose-800', 'border-rose-300');
                     }
