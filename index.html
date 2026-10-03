@@ -18,15 +18,16 @@
             transform: scale(1.05);
             z-index: 10;
         }
-        .header-d1 {
-            background-color: #eff6ff;
-            border-color: #bfdbfe;
-            color: #1d4ed8;
+        /* Estils dinàmics per als dos daus */
+        .theme-blue {
+            background-color: #eff6ff !important;
+            border-color: #bfdbfe !important;
+            color: #1d4ed8 !important;
         }
-        .header-d2 {
-            background-color: #f0fdf4;
-            border-color: #bbf7d0;
-            color: #15803d;
+        .theme-green {
+            background-color: #f0fdf4 !important;
+            border-color: #bbf7d0 !important;
+            color: #15803d !important;
         }
     </style>
 </head>
@@ -86,8 +87,8 @@
                     </div>
                 </div>
 
-                <!-- Botó per canviar l'ordre dels daus -->
-                <div id="order-selector-container" class="flex justify-end pt-2 border-t border-slate-100">
+                <!-- Selector d'ordre adaptatiu -->
+                <div class="flex justify-end pt-2 border-t border-slate-100">
                     <button id="btn-toggle-order" onclick="toggleOrder()" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
                         <i class="fa-solid fa-arrow-rotate-left text-slate-500"></i> Ordre: <span id="order-label" class="font-bold text-indigo-600">Dau 1 &rarr; Dau 2</span>
                     </button>
@@ -117,32 +118,28 @@
                             <tr>
                                 <th class="p-1 border border-slate-200 bg-slate-100 rounded-tl-xl text-[10px] font-bold">
                                     <div class="flex flex-col justify-between h-full">
-                                        <span class="text-emerald-700 text-right"><i class="fa-solid fa-dice-two"></i> D2 &rarr;</span>
-                                        <span class="text-blue-700 text-left"><i class="fa-solid fa-dice-one"></i> D1 &darr;</span>
+                                        <span id="label-top-right" class="text-emerald-700 text-right"><i class="fa-solid fa-dice-two"></i> D2 &rarr;</span>
+                                        <span id="label-bottom-left" class="text-blue-700 text-left"><i class="fa-solid fa-dice-one"></i> D1 &darr;</span>
                                     </div>
                                 </th>
-                                <th colspan="6" class="p-1 border border-emerald-200 header-d2 text-xs font-bold tracking-wider uppercase">
-                                    <i class="fa-solid fa-dice text-emerald-600 mr-1"></i> Dau 2 (Columnes)
+                                <th id="col-title" colspan="6" class="p-1 border text-xs font-bold tracking-wider uppercase theme-green">
+                                    Dau 2 (Columnes)
                                 </th>
                             </tr>
-                            <tr>
-                                <th class="p-2 border border-slate-200 bg-slate-50 text-slate-400 text-xs">D1 \ D2</th>
-                                <script>
-                                    for(let i=1; i<=6; i++){
-                                        document.write(`<th class="p-2 border border-emerald-200 header-d2 text-sm font-black w-12"><i class="fa-solid fa-dice-${['one','two','three','four','five','six'][i-1]}"></i> ${i}</th>`);
-                                    }
-                                </script>
+                            <tr id="col-headers">
+                                <th id="corner-label" class="p-2 border border-slate-200 bg-slate-50 text-slate-400 text-xs">D1 \ D2</th>
+                                <!-- Generat per JS -->
                             </tr>
                         </thead>
                         <tbody id="matrix-body">
-                            <!-- Es genera dinàmicament per JS -->
+                            <!-- Generat per JS -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- Panell Dret: Probabilitats i Simulació -->
+        <!-- Panell Dret -->
         <section class="lg:col-span-5 space-y-4">
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between mb-2">
@@ -205,8 +202,8 @@
             <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
                 <p class="font-semibold text-slate-800">Com treballar aquesta activitat a l'aula:</p>
                 <ul class="list-disc pl-4 space-y-1.5">
-                    <li><strong>Diferenciació de daus:</strong> El <span class="text-blue-700 font-bold">Dau 1 (blau)</span> està situat a les files i el <span class="text-emerald-700 font-bold">Dau 2 (verd)</span> a les columnes.</li>
-                    <li><strong>Canvi d'ordre:</strong> En la resta directa pots canviar entre $D1 - D2$ i $D2 - D1$ fent servir el botó d'ordre per avaluar l'efecte del signe.</li>
+                    <li><strong>Diferenciació de daus:</strong> El primer dau de l'operació es mostra en <span class="text-blue-700 font-bold">blau</span> i el segon en <span class="text-emerald-700 font-bold">verd</span>.</li>
+                    <li><strong>Canvi d'ordre:</strong> Utilitza el botó d'ordre per commutar entre $D1 \rightarrow D2$ i $D2 \rightarrow D1$. Observa com s'intercanvien els colors i les etiquetes a les files i columnes.</li>
                 </ul>
             </div>
             <div class="mt-5 text-right">
@@ -220,7 +217,7 @@
     <!-- Codi Lògic JavaScript -->
     <script>
         let currentOp = 'suma';
-        let isDirectOrder = true; // true = D1->D2, false = D2->D1
+        let isDirectOrder = true; // true = D1 -> D2, false = D2 -> D1
         let matrixData = Array(6).fill(null).map(() => Array(6).fill(null));
         let selectedVal = null;
         let simResults = {};
@@ -262,19 +259,47 @@
             isDirectOrder = !isDirectOrder;
             document.getElementById('order-label').innerText = isDirectOrder ? 'Dau 1 \u2192 Dau 2' : 'Dau 2 \u2192 Dau 1';
             updateSubTitle();
-            clearMatrix();
-            renderValueSelector();
+            initMatrixDOM();
         }
 
         function initMatrixDOM() {
+            const rowClass = isDirectOrder ? 'theme-blue' : 'theme-green';
+            const colClass = isDirectOrder ? 'theme-green' : 'theme-blue';
+
+            // Actualitzar capçalera superior de columnes
+            const colTitle = document.getElementById('col-title');
+            colTitle.className = `p-1 border text-xs font-bold tracking-wider uppercase ${colClass}`;
+            colTitle.innerHTML = `<i class="fa-solid fa-dice mr-1"></i> ${isDirectOrder ? 'Dau 2 (Columnes)' : 'Dau 1 (Columnes)'}`;
+
+            // Actualitzar etiquetes de la casella d'esquina
+            document.getElementById('label-top-right').innerHTML = `<i class="fa-solid fa-dice"></i> ${isDirectOrder ? 'D2 \u2192' : 'D1 \u2192'}`;
+            document.getElementById('label-top-right').className = isDirectOrder ? 'text-emerald-700 text-right' : 'text-blue-700 text-right';
+            
+            document.getElementById('label-bottom-left').innerHTML = `<i class="fa-solid fa-dice"></i> ${isDirectOrder ? 'D1 \u2193' : 'D2 \u2193'}`;
+            document.getElementById('label-bottom-left').className = isDirectOrder ? 'text-blue-700 text-left' : 'text-emerald-700 text-left';
+
+            document.getElementById('corner-label').innerText = isDirectOrder ? 'D1 \\ D2' : 'D2 \\ D1';
+
+            // Generar capçaleres de columna
+            const colHeaders = document.getElementById('col-headers');
+            colHeaders.innerHTML = `<th class="p-2 border border-slate-200 bg-slate-50 text-slate-400 text-xs">${isDirectOrder ? 'D1 \\ D2' : 'D2 \\ D1'}</th>`;
+            const diceIcons = ['one','two','three','four','five','six'];
+            for(let j=1; j<=6; j++) {
+                const th = document.createElement('th');
+                th.className = `p-2 border text-sm font-black w-12 ${colClass}`;
+                th.innerHTML = `<i class="fa-solid fa-dice-${diceIcons[j-1]}"></i> ${j}`;
+                colHeaders.appendChild(th);
+            }
+
+            // Generar cos de la matriu (files)
             const tbody = document.getElementById('matrix-body');
             tbody.innerHTML = '';
 
             for (let i = 1; i <= 6; i++) {
                 const tr = document.createElement('tr');
                 const th = document.createElement('th');
-                th.className = 'p-2 border border-blue-200 header-d1 text-sm font-black w-12';
-                th.innerHTML = `<i class="fa-solid fa-dice-${['one','two','three','four','five','six'][i-1]}"></i> ${i}`;
+                th.className = `p-2 border text-sm font-black w-12 ${rowClass}`;
+                th.innerHTML = `<i class="fa-solid fa-dice-${diceIcons[i-1]}"></i> ${i}`;
                 tr.appendChild(th);
 
                 for (let j = 1; j <= 6; j++) {
@@ -293,6 +318,8 @@
                 }
                 tbody.appendChild(tr);
             }
+
+            clearMatrix();
             renderValueSelector();
             resetSimulation();
         }
