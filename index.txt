@@ -15,16 +15,18 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        pcmat: {
-                            DEFAULT: '#37823c',
-                            dark: '#2b6830',
-                            light: '#4a9d4f',
-                            soft: '#eef7ef',
-                            border: '#a3d4a6'
+        tailwind = {
+            config: {
+                theme: {
+                    extend: {
+                        colors: {
+                            pcmat: {
+                                DEFAULT: '#37823c',
+                                dark: '#2b6830',
+                                light: '#4a9d4f',
+                                soft: '#eef7ef',
+                                border: '#a3d4a6'
+                            }
                         }
                     }
                 }
@@ -36,21 +38,22 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, #f4f9f5 0%, #e8f3ea 50%, #f0f7f1 100%);
             color: #0f172a;
+            min-height: 100vh;
         }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(163, 212, 166, 0.5);
-            box-shadow: 0 10px 25px -5px rgba(55, 130, 60, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+            border: 1px solid rgba(163, 212, 166, 0.6);
+            box-shadow: 0 10px 25px -5px rgba(55, 130, 60, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
         }
 
         .glass-button {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(8px);
             border: 1px solid #cbd5e1;
             color: #334155;
@@ -301,7 +304,7 @@
                     <div>
                         <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                             <i class="fa-solid fa-dice-five text-rose-500"></i>
-                            <span>Simulador (Llei dels Grans Nombres)</span>
+                            <span>Simulació (Llei dels Grans Nombres)</span>
                         </h2>
                         <p class="text-[11px] text-slate-500">Comprova com l'atzar es regula en augmentar <i>N</i></p>
                     </div>
@@ -412,6 +415,7 @@
         let selectedSumFilter = null;
         let autoRollInterval = null;
         let audioCtx = null;
+        let appInitialized = false;
 
         const OPERATIONS = {
             suma: {
@@ -475,8 +479,10 @@
 
         function initAudio() {
             if (!audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (AudioContext) audioCtx = new AudioContext();
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) audioCtx = new AudioContext();
+                } catch(e) {}
             }
         }
 
@@ -517,15 +523,16 @@
             const dirLabel = document.getElementById('label-resta-dir');
 
             if (isOrderSwapped) {
-                labelEl.innerText = "Ordre: Dau 2 ➔ Dau 1";
+                if (labelEl) labelEl.innerText = "Ordre: Dau 2 ➔ Dau 1";
                 if (dirLabel) dirLabel.innerText = "(D2 − D1)";
             } else {
-                labelEl.innerText = "Ordre: Dau 1 ➔ Dau 2";
+                if (labelEl) labelEl.innerText = "Ordre: Dau 1 ➔ Dau 2";
                 if (dirLabel) dirLabel.innerText = "(D1 − D2)";
             }
 
             const op = OPERATIONS[currentOp];
-            document.getElementById('app-subtitle').innerText = typeof op.subtitle === 'function' ? op.subtitle() : op.subtitle;
+            const subEl = document.getElementById('app-subtitle');
+            if (subEl) subEl.innerText = typeof op.subtitle === 'function' ? op.subtitle() : op.subtitle;
 
             resetMatrix();
             initSumButtons();
@@ -623,10 +630,15 @@
             });
 
             const op = OPERATIONS[opId];
-            document.getElementById('op-icon-badge').innerText = op.badgeIcon;
-            document.getElementById('app-subtitle').innerText = typeof op.subtitle === 'function' ? op.subtitle() : op.subtitle;
-            document.getElementById('matrix-op-symbol').innerText = op.symbol;
-            document.getElementById('sim-op-symbol').innerText = op.symbol;
+            const badgeIcon = document.getElementById('op-icon-badge');
+            const subTitle = document.getElementById('app-subtitle');
+            const opSymbol = document.getElementById('matrix-op-symbol');
+            const simSymbol = document.getElementById('sim-op-symbol');
+
+            if (badgeIcon) badgeIcon.innerText = op.badgeIcon;
+            if (subTitle) subTitle.innerText = typeof op.subtitle === 'function' ? op.subtitle() : op.subtitle;
+            if (opSymbol) opSymbol.innerText = op.symbol;
+            if (simSymbol) simSymbol.innerText = op.symbol;
 
             resetMatrix();
             initSumButtons();
@@ -650,6 +662,7 @@
             }
 
             const matrixRowsContainer = document.getElementById('matrix-rows');
+            if (!matrixRowsContainer) return;
             matrixRowsContainer.innerHTML = '';
 
             for (let r = 0; r < 6; r++) {
@@ -739,7 +752,7 @@
             let count = 0;
             matrixState.forEach(row => row.forEach(v => { if (v !== null) count++; }));
             if (count === 36 && window.confetti) {
-                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                try { confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } }); } catch(e){}
             }
 
             updateMatrixDOM();
@@ -754,7 +767,9 @@
                 }
             }
             updateMatrixDOM();
-            if (window.confetti) confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+            if (window.confetti) {
+                try { confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } }); } catch(e){}
+            }
         }
 
         function resetMatrix() {
@@ -926,7 +941,8 @@
             if (die2El) die2El.innerText = DIE_UNICODE[1];
             if (sumEl) sumEl.innerText = OPERATIONS[currentOp].calc(0, 0);
 
-            document.getElementById('sim-total-count').innerText = "0 tirades";
+            const countEl = document.getElementById('sim-total-count');
+            if (countEl) countEl.innerText = "0 tirades";
             renderHistogram();
             updatePedagogicalHint();
         }
@@ -940,7 +956,7 @@
             const sumEl = document.getElementById('die-sum-display');
             const op = OPERATIONS[currentOp];
 
-            if (amount === 1) {
+            if (amount === 1 && die1El && die2El && sumEl) {
                 die1El.classList.add('rolling');
                 die2El.classList.add('rolling');
 
@@ -959,7 +975,8 @@
                     simTotalRolls += 1;
                     simCounts[res] = (simCounts[res] || 0) + 1;
 
-                    document.getElementById('sim-total-count').innerText = `${simTotalRolls.toLocaleString()} tirades`;
+                    const countEl = document.getElementById('sim-total-count');
+                    if (countEl) countEl.innerText = `${simTotalRolls.toLocaleString()} tirades`;
                     renderHistogram();
                     updatePedagogicalHint();
                 }, 180);
@@ -975,11 +992,12 @@
 
                 const lastD1 = Math.floor(Math.random() * 6) + 1;
                 const lastD2 = Math.floor(Math.random() * 6) + 1;
-                die1El.innerText = DIE_UNICODE[lastD1];
-                die2El.innerText = DIE_UNICODE[lastD2];
-                sumEl.innerText = op.calc(lastD1 - 1, lastD2 - 1);
+                if (die1El) die1El.innerText = DIE_UNICODE[lastD1];
+                if (die2El) die2El.innerText = DIE_UNICODE[lastD2];
+                if (sumEl) sumEl.innerText = op.calc(lastD1 - 1, lastD2 - 1);
 
-                document.getElementById('sim-total-count').innerText = `${simTotalRolls.toLocaleString()} tirades`;
+                const countEl = document.getElementById('sim-total-count');
+                if (countEl) countEl.innerText = `${simTotalRolls.toLocaleString()} tirades`;
                 renderHistogram();
                 updatePedagogicalHint();
             }
@@ -1006,15 +1024,22 @@
         }
 
         function initApp() {
-            setOperation('suma');
-            initMatrixDOM();
-            initSumButtons();
+            if (appInitialized) return;
+            appInitialized = true;
+            try {
+                initMatrixDOM();
+                setOperation('suma');
+                initSumButtons();
+            } catch(e) {
+                console.error("Error durant la inicialització:", e);
+            }
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(initApp, 1);
         } else {
-            initApp();
+            document.addEventListener('DOMContentLoaded', initApp);
+            window.addEventListener('load', initApp);
         }
     </script>
 </body>
