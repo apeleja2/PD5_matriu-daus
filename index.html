@@ -29,6 +29,14 @@
             border-color: #bbf7d0 !important;
             color: #15803d !important;
         }
+
+        /* Escala Unificada de Probabilitat (1/36 a 6/36) */
+        .prob-p1 { background-color: #f0f9ff; color: #0369a1; border-color: #bae6fd; font-weight: 700; } /* 1/36 (~2.8%) */
+        .prob-p2 { background-color: #e0f2fe; color: #0284c7; border-color: #7dd3fc; font-weight: 700; } /* 2/36 (~5.6%) */
+        .prob-p3 { background-color: #e0e7ff; color: #4338ca; border-color: #a5b4fc; font-weight: 800; } /* 3/36 (~8.3%) */
+        .prob-p4 { background-color: #c7d2fe; color: #3730a3; border-color: #818cf8; font-weight: 800; } /* 4/36 (~11.1%) */
+        .prob-p5 { background-color: #f5d0fe; color: #86198f; border-color: #f0abfc; font-weight: 900; } /* 5/36 (~13.9%) */
+        .prob-p6 { background-color: #f0abfc; color: #701a75; border-color: #e879f9; font-weight: 900; } /* 6/36+ (~16.7%) */
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen p-3 md:p-6">
@@ -97,6 +105,26 @@
 
             <!-- Matriu de Daus -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                
+                <!-- Llegenda Visual del Mapa de Calor -->
+                <div class="mb-3 p-2 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-2 text-[11px]">
+                    <span class="font-bold text-slate-600 flex items-center gap-1">
+                        <i class="fa-solid fa-fire text-amber-500"></i> Probabilitat:
+                    </span>
+                    <div class="flex items-center gap-1 flex-1 justify-end max-w-xs">
+                        <span class="text-[10px] text-slate-400 font-bold">Mín (1/36)</span>
+                        <div class="flex h-3 rounded-full overflow-hidden w-full border border-slate-200">
+                            <div class="flex-1 prob-p1" title="1/36 (~2.8%)"></div>
+                            <div class="flex-1 prob-p2" title="2/36 (~5.6%)"></div>
+                            <div class="flex-1 prob-p3" title="3/36 (~8.3%)"></div>
+                            <div class="flex-1 prob-p4" title="4/36 (~11.1%)"></div>
+                            <div class="flex-1 prob-p5" title="5/36 (~13.9%)"></div>
+                            <div class="flex-1 prob-p6" title="6/36 (~16.7%)"></div>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-bold">Màx (&ge;6/36)</span>
+                    </div>
+                </div>
+
                 <div class="flex items-center justify-between mb-3">
                     <div id="matrix-status" class="text-xs font-bold px-2.5 py-1 rounded-md bg-amber-100 text-amber-800">
                         En construcció (0/36)
@@ -200,8 +228,8 @@
             <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
                 <p class="font-semibold text-slate-800">Com treballar aquesta activitat a l'aula:</p>
                 <ul class="list-disc pl-4 space-y-1.5">
+                    <li><strong>Escala Unificada:</strong> El color s'assigna estrictament segons el nombre de casos afavoridors sobre 36. Un blau cel indica 1/36 (poques opcions) i un fúcsia intens indica &ge;6/36 (moltes opcions).</li>
                     <li><strong>Diferenciació de daus:</strong> El primer dau de l'operació es mostra en <span class="text-blue-700 font-bold">blau</span> i el segon en <span class="text-emerald-700 font-bold">verd</span>.</li>
-                    <li><strong>Mapa de calor integral:</strong> Totes les cel·les es tenyeixen segons la seva probabilitat exacta (del blau/cel clar per als esdeveniments rars fins al violeta/fúcsia per als més freqüents).</li>
                     <li><strong>Canvi d'ordre:</strong> Utilitza el botó d'ordre per commutar entre $D1 \rightarrow D2$ i $D2 \rightarrow D1$. Observa com s'intercanvien els colors i les etiquetes dels eixos.</li>
                 </ul>
             </div>
@@ -243,7 +271,7 @@
             return Array.from(vals).sort((a, b) => a - b);
         }
 
-        /* Mapa de calor integrat i adaptatiu per a TOTS els valors/freqüències */
+        /* Mapa de calor UNIFICAT basat en el nombre d'aparicions sobre 36 */
         function getHeatmapClass(val, op) {
             let count = 0;
             for (let i = 1; i <= 6; i++) {
@@ -252,18 +280,13 @@
                 }
             }
 
-            // Escala de colors segons el nombre exacte de casos afavoridors (d'1 a 10)
-            switch (count) {
-                case 1: return 'bg-sky-100 text-sky-900 border-sky-300 font-extrabold';
-                case 2: return 'bg-cyan-100 text-cyan-900 border-cyan-300 font-extrabold';
-                case 3: return 'bg-teal-100 text-teal-900 border-teal-300 font-extrabold';
-                case 4: return 'bg-emerald-100 text-emerald-900 border-emerald-300 font-extrabold';
-                case 5: return 'bg-amber-100 text-amber-900 border-amber-300 font-extrabold';
-                case 6: return 'bg-orange-100 text-orange-900 border-orange-300 font-extrabold';
-                case 8: return 'bg-rose-100 text-rose-900 border-rose-300 font-extrabold';
-                case 10: return 'bg-purple-100 text-purple-900 border-purple-300 font-extrabold';
-                default: return 'bg-indigo-100 text-indigo-900 border-indigo-300 font-extrabold';
-            }
+            // Unificació directa segons la probabilitat teòrica (1 a 6+ casos afavoridors)
+            if (count <= 1) return 'prob-p1';
+            if (count === 2) return 'prob-p2';
+            if (count === 3) return 'prob-p3';
+            if (count === 4) return 'prob-p4';
+            if (count === 5) return 'prob-p5';
+            return 'prob-p6'; // 6 o més casos
         }
 
         function updateSubTitle() {
@@ -288,12 +311,12 @@
             const rowClass = isDirectOrder ? 'theme-blue' : 'theme-green';
             const colClass = isDirectOrder ? 'theme-green' : 'theme-blue';
 
-            // Actualitzar capçalera superior de columnes
+            // Capçalera superior
             const colTitle = document.getElementById('col-title');
             colTitle.className = `p-1 border text-xs font-bold tracking-wider uppercase ${colClass}`;
             colTitle.innerHTML = `<i class="fa-solid fa-dice mr-1"></i> ${isDirectOrder ? 'Dau 2 (Columnes)' : 'Dau 1 (Columnes)'}`;
 
-            // Actualitzar etiquetes de la casella d'esquina
+            // Etiquetes cantonada
             document.getElementById('label-top-right').innerHTML = `<i class="fa-solid fa-dice"></i> ${isDirectOrder ? 'D2 \u2192' : 'D1 \u2192'}`;
             document.getElementById('label-top-right').className = isDirectOrder ? 'text-emerald-700 text-right' : 'text-blue-700 text-right';
             
@@ -302,7 +325,7 @@
 
             document.getElementById('corner-label').innerText = isDirectOrder ? 'D1 \\ D2' : 'D2 \\ D1';
 
-            // Generar capçaleres de columna
+            // Capçaleres de columna
             const colHeaders = document.getElementById('col-headers');
             colHeaders.innerHTML = `<th class="p-2 border border-slate-200 bg-slate-50 text-slate-400 text-xs">${isDirectOrder ? 'D1 \\ D2' : 'D2 \\ D1'}</th>`;
             const diceIcons = ['one','two','three','four','five','six'];
@@ -313,7 +336,7 @@
                 colHeaders.appendChild(th);
             }
 
-            // Generar cos de la matriu (files)
+            // Cos de la matriu
             const tbody = document.getElementById('matrix-body');
             tbody.innerHTML = '';
 
@@ -375,18 +398,7 @@
             let filled = 0;
             let correct = 0;
 
-            const allHeatmapClasses = [
-                'bg-sky-100', 'text-sky-900', 'border-sky-300',
-                'bg-cyan-100', 'text-cyan-900', 'border-cyan-300',
-                'bg-teal-100', 'text-teal-900', 'border-teal-300',
-                'bg-emerald-100', 'text-emerald-900', 'border-emerald-300',
-                'bg-amber-100', 'text-amber-900', 'border-amber-300',
-                'bg-orange-100', 'text-orange-900', 'border-orange-300',
-                'bg-rose-100', 'text-rose-900', 'border-rose-300',
-                'bg-purple-100', 'text-purple-900', 'border-purple-300',
-                'bg-indigo-100', 'text-indigo-900', 'border-indigo-300',
-                'bg-rose-100', 'text-rose-800', 'border-rose-300'
-            ];
+            const allProbClasses = ['prob-p1', 'prob-p2', 'prob-p3', 'prob-p4', 'prob-p5', 'prob-p6', 'bg-rose-100', 'text-rose-800', 'border-rose-300'];
 
             const inputs = document.querySelectorAll('.cell-input');
             inputs.forEach(input => {
@@ -395,14 +407,14 @@
                 const val = matrixData[r][c];
                 const expected = getExpectedValue(r + 1, c + 1, currentOp);
 
-                input.classList.remove(...allHeatmapClasses);
+                input.classList.remove(...allProbClasses);
 
                 if (val !== null) {
                     filled++;
                     if (val === expected) {
                         correct++;
                         const heatmapClass = getHeatmapClass(val, currentOp);
-                        input.classList.add(...heatmapClass.split(' '));
+                        input.classList.add(heatmapClass);
                     } else {
                         input.classList.add('bg-rose-100', 'text-rose-800', 'border-rose-300');
                     }
