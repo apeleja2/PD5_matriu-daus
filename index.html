@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrius de Daus de 6 Cares - PCMAT</title>
+    <title>PCMat: Matriu de Daus i Atzar</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome per a icones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         .cell-input {
             transition: all 0.15s ease;
@@ -23,20 +24,20 @@
         .theme-blue { background-color: #eff6ff !important; border-color: #bfdbfe !important; color: #1d4ed8 !important; }
         .theme-green { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; color: #15803d !important; }
 
-        /* Icona d'error overlay sobre les cel·les amb valor incorrecte */
+        /* Badge d'error amb creu vermella (X) sobre les cel·les incorrectes */
         .cell-container {
             position: relative;
             display: inline-block;
         }
         .error-badge {
             position: absolute;
-            top: -3px;
-            right: -3px;
+            top: -4px;
+            right: -4px;
             background-color: #dc2626;
             color: #ffffff;
             font-size: 9px;
-            width: 15px;
-            height: 15px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -44,7 +45,7 @@
             pointer-events: none;
             z-index: 25;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            border: 1px solid #ffffff;
+            border: 1.5px solid #ffffff;
             animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -53,17 +54,18 @@
             100% { transform: scale(1); }
         }
 
-        /* Assignació de colors segons les freqüències sobre 36 */
+        /* Classes de colors per freqüència absoluta sobre 36 */
         .prob-1 { background-color: #f1f5f9 !important; color: #475569 !important; border: 2px solid #cbd5e1 !important; } /* 1/36 - Gris */
         .prob-2 { background-color: #e0f2fe !important; color: #0369a1 !important; border: 2px solid #38bdf8 !important; } /* 2/36 - Blau */
-        .prob-3-4 { background-color: #fef08a !important; color: #a16207 !important; border: 2px solid #facc15 !important; } /* 3-4/36 - Groc */
-        .prob-5-6 { background-color: #ffe4e6 !important; color: #be123c !important; border: 2px solid #fb7185 !important; } /* 5-6/36 - Taronja/Vermell */
-        .prob-7plus { background-color: #f3e8ff !important; color: #6b21a8 !important; border: 2px solid #c084fc !important; } /* >6/36 (7+) - Lila / Púrpura intens */
+        .prob-3 { background-color: #dcfce7 !important; color: #15803d !important; border: 2px solid #4ade80 !important; } /* 3/36 - Verd */
+        .prob-4 { background-color: #fef08a !important; color: #a16207 !important; border: 2px solid #facc15 !important; } /* 4/36 - Groc */
+        .prob-5 { background-color: #ffedd5 !important; color: #c2410c !important; border: 2px solid #fb923c !important; } /* 5/36 - Taronja */
+        .prob-6 { background-color: #ffe4e6 !important; color: #be123c !important; border: 2px solid #fb7185 !important; } /* 6/36 - Vermell */
+        .prob-7plus { background-color: #f3e8ff !important; color: #6b21a8 !important; border: 2px solid #c084fc !important; } /* >=7/36 - Lila */
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans p-2 md:p-3 text-xs min-h-screen">
 
-    <!-- Capçalera Principal -->
     <header class="max-w-6xl mx-auto bg-white rounded-xl shadow-xs border border-slate-200 p-2.5 mb-2">
         <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2.5">
@@ -72,11 +74,11 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-1.5">
-                        <span class="text-[9px] font-black uppercase text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">PROGRAMA PCMAT</span>
-                        <span class="text-[10px] text-slate-400 font-bold">Atzar, Probabilitat i Simulació Computacional</span>
+                        <span class="text-[9px] font-black uppercase text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">RECURS PEDAGÒGIC PCMAT</span>
+                        <span class="text-[10px] text-slate-400 font-bold">Atzar, Probabilitat i Simulació</span>
                     </div>
-                    <h1 class="text-sm font-black text-slate-900 leading-tight">MATRIUS DE DAUS DE 6 CARES</h1>
-                    <p id="sub-title" class="text-[11px] text-slate-500 font-medium leading-tight">Resta sempre la xifra del dau més gran menys la del dau més petit</p>
+                    <h1 class="text-sm font-black text-slate-900 leading-tight">MATRIUS DE DAUS I ATZAR</h1>
+                    <p id="sub-title" class="text-[11px] text-slate-500 font-medium leading-tight">Resta sempre la xifra del dau més gran menys la del dau més petit (|D1 - D2|)</p>
                 </div>
             </div>
             
@@ -85,24 +87,23 @@
                     <i class="fa-solid fa-lightbulb text-amber-500"></i> <span>Orientacions pel docent</span>
                 </button>
                 <div class="text-right border-l pl-2 border-slate-200">
-                    <div class="text-[9px] font-black uppercase text-slate-400 leading-none">ESPAI MOSTRAL</div>
-                    <div class="text-xs font-black text-emerald-600 leading-tight">36 Casos</div>
+                    <div class="text-[9px] font-black uppercase text-slate-400 leading-none">PROGRÉS MATRIU</div>
+                    <div id="progress-badge" class="text-xs font-black text-amber-600 leading-tight">0 / 36 cel·les</div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Barra d'Operacions i Selector d'Ordre -->
     <div class="max-w-6xl mx-auto bg-white p-2 rounded-xl border border-slate-200 shadow-xs mb-2 flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-1.5 flex-wrap">
             <span class="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1 mr-1">
                 <i class="fa-solid fa-bars-staggered"></i> OPERACIÓ:
             </span>
-            <button id="op-suma" onclick="setOperation('suma')" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition bg-slate-50 text-slate-700 border-slate-200">
-                + Suma <span class="text-[9px] font-normal opacity-70">(D1 + D2)</span>
-            </button>
             <button id="op-dif" onclick="setOperation('dif')" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition bg-emerald-600 text-white border-emerald-600 shadow-xs">
                 Gran - Petit <span class="text-[9px] font-normal opacity-80">(|D1 - D2|)</span>
+            </button>
+            <button id="op-suma" onclick="setOperation('suma')" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition bg-slate-50 text-slate-700 border-slate-200">
+                + Suma <span class="text-[9px] font-normal opacity-70">(D1 + D2)</span>
             </button>
             <button id="op-resta" onclick="setOperation('resta')" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition bg-slate-50 text-slate-700 border-slate-200">
                 - Resta Directa <span class="text-[9px] font-normal opacity-70">(D2 - D1)</span>
@@ -117,7 +118,6 @@
         </button>
     </div>
 
-    <!-- Layout Principal -->
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-2">
         
         <!-- Secció Esquerra: Matriu 6x6 i Vista Agrupada -->
@@ -135,8 +135,8 @@
                     </div>
 
                     <div class="flex gap-1.5">
-                        <button onclick="autoCompleteMatrix()" class="text-[10px] bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold px-2 py-1 rounded-md border border-slate-200 transition flex items-center gap-1">
-                            <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i> Completar
+                        <button onclick="autoCompleteMatrix()" class="text-[10px] bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold px-2 py-1 rounded-md border border-emerald-200 transition flex items-center gap-1">
+                            <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i> Solució / Completar
                         </button>
                         <button onclick="clearMatrix()" class="text-[10px] bg-slate-50 hover:bg-slate-100 text-rose-600 font-bold px-2 py-1 rounded-md border border-slate-200 transition">
                             <i class="fa-solid fa-rotate-right"></i> Netejar
@@ -163,45 +163,46 @@
                 <div class="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-200 text-[10px] text-slate-600 flex items-start gap-1.5">
                     <i class="fa-solid fa-circle-info text-emerald-600 mt-0.5"></i>
                     <div>
-                        <strong>L'Espai Mostral ($E$):</strong> Les 36 caselles de la matriu representen totes les parelles possibles de daus. En l'operació <em>Gran - Petit</em>, només hi ha 6 resultats possibles, però alguns es repeteixen fins a 10 vegades!
+                        <strong>L'Espai Mostral ($E$):</strong> Les 36 caselles de la matriu representen totes les combinacions possibles en llençar dos daus. Emplea la bastida de colors per identificar quins valors tenen major probabilitat d'aparèixer.
                     </div>
                 </div>
 
-                <!-- Llegenda de Colors per Freqüència -->
                 <div class="mt-2.5 pt-2 border-t border-slate-100">
                     <div class="text-[9px] font-black uppercase text-slate-400 mb-1 text-center">FREQÜÈNCIA TEÒRICA EN L'ESPAI MOSTRAL (x / 36)</div>
-                    <div class="grid grid-cols-5 gap-1 text-center text-[8px] font-bold">
+                    <div class="grid grid-cols-7 gap-1 text-center text-[8px] font-bold">
                         <div class="flex flex-col items-center justify-center p-1 rounded bg-slate-50 border border-slate-200">
-                            <span class="w-3 h-3 rounded-full bg-slate-200 border border-slate-400 mb-0.5"></span> 
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-400 mb-0.5"></span> 
                             <span>1/36</span>
-                            <span class="text-[7px] text-slate-400 font-normal">Molt rara</span>
                         </div>
                         <div class="flex flex-col items-center justify-center p-1 rounded bg-sky-50 border border-sky-100">
-                            <span class="w-3 h-3 rounded-full bg-sky-200 border border-sky-400 mb-0.5"></span> 
+                            <span class="w-2.5 h-2.5 rounded-full bg-sky-200 border border-sky-400 mb-0.5"></span> 
                             <span>2/36</span>
-                            <span class="text-[7px] text-sky-600 font-normal">Baixa</span>
+                        </div>
+                        <div class="flex flex-col items-center justify-center p-1 rounded bg-emerald-50 border border-emerald-100">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-300 border border-emerald-500 mb-0.5"></span> 
+                            <span>3/36</span>
                         </div>
                         <div class="flex flex-col items-center justify-center p-1 rounded bg-yellow-50 border border-yellow-100">
-                            <span class="w-3 h-3 rounded-full bg-yellow-200 border border-yellow-400 mb-0.5"></span> 
-                            <span>3-4/36</span>
-                            <span class="text-[7px] text-yellow-700 font-normal">Mitjana</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-yellow-200 border border-yellow-400 mb-0.5"></span> 
+                            <span>4/36</span>
+                        </div>
+                        <div class="flex flex-col items-center justify-center p-1 rounded bg-orange-50 border border-orange-100">
+                            <span class="w-2.5 h-2.5 rounded-full bg-orange-300 border border-orange-500 mb-0.5"></span> 
+                            <span>5/36</span>
                         </div>
                         <div class="flex flex-col items-center justify-center p-1 rounded bg-rose-50 border border-rose-100">
-                            <span class="w-3 h-3 rounded-full bg-rose-200 border border-rose-400 mb-0.5"></span> 
-                            <span>5-6/36</span>
-                            <span class="text-[7px] text-rose-600 font-normal">Alta</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-200 border border-rose-400 mb-0.5"></span> 
+                            <span>6/36</span>
                         </div>
                         <div class="flex flex-col items-center justify-center p-1 rounded bg-purple-50 border border-purple-200 text-purple-900">
-                            <span class="w-3 h-3 rounded-full bg-purple-400 border border-purple-600 mb-0.5"></span> 
-                            <span>&gt;6/36</span>
-                            <span class="text-[7px] text-purple-600 font-normal">Màxima (&ge;7)</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-purple-400 border border-purple-600 mb-0.5"></span> 
+                            <span>&ge; 7/36</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Secció Dreta: Anàlisi d'Esdeveniment, Histograma i Simulació -->
         <section class="lg:col-span-6 space-y-2">
             
             <!-- Anàlisi d'un Esdeveniment (Regla de Laplace) -->
@@ -212,11 +213,11 @@
                     </h2>
                     <span id="selected-val-badge" class="text-[10px] font-black text-slate-400">- / 36</span>
                 </div>
-                <p class="text-[10px] text-slate-400 mb-1.5">Clica un dels botons per veure quants cops pot sortir aquest resultat segons la Regla de Laplace.</p>
-                <div class="text-[9px] font-black uppercase text-slate-400 mb-1">FILTRAR PER VALOR DEL RESULTAT:</div>
+                <p class="text-[10px] text-slate-400 mb-1.5">Clica un dels botons per analitzar la probabilitat teòrica segons la Regla de Laplace.</p>
+                <div class="text-[9px] font-black uppercase text-slate-400 mb-1">RESULTATS POSSIBLES:</div>
                 <div id="val-selector" class="flex flex-wrap gap-1 mb-2"></div>
                 <div id="event-details" class="p-2 bg-slate-50 rounded-lg border border-slate-200 text-[10px] text-slate-600 font-medium">
-                    Selecciona un valor per veure la seva freqüència teòrica.
+                    Selecciona un resultat per calcular la seva probabilitat teòrica.
                 </div>
             </div>
 
@@ -236,18 +237,18 @@
                         <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-emerald-600"></span> Teòric (Laplace)</span>
                         <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-amber-500"></span> Experimental</span>
                     </div>
-                    <div class="text-slate-400">Error mitjà: <span id="error-val" class="font-black text-slate-600">-</span></div>
+                    <div class="text-slate-400">Diferència mitjana: <span id="error-val" class="font-black text-slate-600">-</span></div>
                 </div>
             </div>
 
-            <!-- Simulació (Llei dels Grans Nombres) -->
+            <!-- Simulador Llei dels Grans Nombres -->
             <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
                 <div class="flex items-center justify-between mb-1.5">
                     <div>
                         <h2 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                            <i class="fa-solid fa-dice text-emerald-600"></i> Simulació (Llei dels Grans Nombres)
+                            <i class="fa-solid fa-dice text-emerald-600"></i> Simulador de Llançaments
                         </h2>
-                        <p class="text-[9px] text-slate-400">Comprova com l'atzar es regula en augmentar el nombre total de tirades $N$</p>
+                        <p class="text-[9px] text-slate-400">Comprova experimentalment com l'atzar es regula en augmentar les tirades ($N$)</p>
                     </div>
                     <div class="flex items-center gap-1">
                         <span id="sim-count" class="text-[10px] font-black px-2 py-0.5 bg-slate-100 text-slate-700 rounded border border-slate-200">0 tirades</span>
@@ -255,7 +256,7 @@
                     </div>
                 </div>
 
-                <!-- Animació de Daus -->
+                <!-- Animació visual de tirada -->
                 <div class="flex items-center justify-center gap-2 my-1.5 bg-emerald-50/50 p-1.5 rounded-xl border border-emerald-100">
                     <div id="dice-1" class="w-7 h-7 bg-white rounded shadow-xs border border-blue-300 flex items-center justify-center font-black text-blue-700 text-sm">-</div>
                     <span id="dice-op-sign" class="font-black text-slate-400 text-xs">-</span>
@@ -264,7 +265,7 @@
                     <div id="dice-res" class="w-8 h-8 bg-emerald-600 text-white rounded-lg shadow-xs flex items-center justify-center font-black text-sm">-</div>
                 </div>
 
-                <!-- Botons d'intervals de tirades (+1, +10, +50, +100, +500, Auto) -->
+                <!-- Botons d'increment decimal -->
                 <div class="grid grid-cols-6 gap-1 mb-2">
                     <button onclick="runSimulation(1)" class="py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded border border-slate-200 text-[10px] text-center transition">
                         +1 <span class="block text-[8px] font-normal text-slate-400">Tirada</span>
@@ -282,7 +283,7 @@
                         +500 <span class="block text-[8px] font-normal text-slate-400">Tirades</span>
                     </button>
                     <button id="btn-auto" onclick="toggleAutoSim()" class="py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded text-[10px] text-center shadow-2xs transition">
-                    Auto
+                        &blackforward; Auto
                     </button>
                 </div>
 
@@ -290,14 +291,13 @@
                 <div class="p-2 bg-amber-50 rounded-lg border border-amber-200 text-[10px] text-amber-900 flex items-start gap-1.5">
                     <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5"></i>
                     <div>
-                        <strong>Assistent Pedagògic PCMat:</strong> <span id="pedagogic-msg">Comença simulant poques tirades (+1 o +10). Observa com les barres taronja (experiment) no coincideixen amb les verdes (teoria).</span>
+                        <strong>Assistent Pedagògic PCMat:</strong> <span id="pedagogic-msg">Comença simulant poques tirades (+1 o +10). Observa com les barres taronja (experiment) no coincideixen exactament amb les verdes (teoria).</span>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Modal Orientacions pel Docent -->
     <div id="orientacions-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
         <div class="bg-white rounded-2xl max-w-lg w-full p-4 shadow-xl border border-slate-200 max-h-[85vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-2 border-b pb-2">
@@ -309,11 +309,11 @@
                 </button>
             </div>
             <div class="space-y-2 text-[11px] text-slate-600 leading-relaxed font-medium">
-                <p class="font-bold text-slate-800">Idees de treball a l'aula:</p>
+                <p class="font-bold text-slate-800">Propostes didàctiques per a l'aula (PD5):</p>
                 <ul class="list-disc pl-4 space-y-1">
-                    <li><strong>Espai Mostral vs Resultats:</strong> Fes notar als alumnes que tot i haver-hi 36 caselles a la matriu, en "Gran - Petit" només hi ha 6 resultats possibles (0 a 5).</li>
-                    <li><strong>Llegenda de Freqüències:</strong> Utilitza el codi de colors per fer evident visualment quins resultats tenen més probabilitat d'aparèixer. Els de freqüència màxima (&gt;6/36, com el 1 i el 2) destaquen en lila.</li>
-                    <li><strong>Evolució de l'Atzar:</strong> Observa l'assistent pedagògic. Acompanya l'alumnat des de l'etapa d'<em>Atzar Pur</em> fins a la confirmació de la <em>Llei dels Grans Nombres</em> a mesura que sumem tirades.</li>
+                    <li><strong>Construcció activa de la matriu:</strong> L'aplicació s'inicia buida ($0/36$) per obligar l'alumnat a calcular cada combinació manualment.</li>
+                    <li><strong>Bastida d'autocorrecció:</strong> Els errors s'indiquen en fons vermell fosc i una creu vermella (❌) a la cantonada per facilitar l'autoregulació.</li>
+                    <li><strong>Observació de la Llei dels Grans Nombres:</strong> Utilitzeu la progressió decimal (+1, +10, +50, +100, +500) per ajudar els alumnes a descobrir com la variabilitat inicial de l'atzar es regula gradualment vers el model teòric de Laplace.</li>
                 </ul>
             </div>
             <div class="mt-3 text-right">
@@ -365,14 +365,16 @@
             return count;
         }
 
-        /* Lògica de colors per rangs de freqüència sobre 36 */
+        /* Assignació de classes de colors segons la freqüència absoluta teòrica */
         function getProbClass(val, op) {
             const freq = getValueFrequency(val, op);
-            if (freq === 1) return 'prob-1';           /* 1/36 - Gris */
-            if (freq === 2) return 'prob-2';           /* 2/36 - Blau */
-            if (freq >= 3 && freq <= 4) return 'prob-3-4'; /* 3-4/36 - Groc */
-            if (freq >= 5 && freq <= 6) return 'prob-5-6'; /* 5-6/36 - Taronja/Vermell */
-            return 'prob-7plus';                      /* >6/36 - Lila / Púrpura intens */
+            if (freq === 1) return 'prob-1';
+            if (freq === 2) return 'prob-2';
+            if (freq === 3) return 'prob-3';
+            if (freq === 4) return 'prob-4';
+            if (freq === 5) return 'prob-5';
+            if (freq === 6) return 'prob-6';
+            return 'prob-7plus';
         }
 
         function updateSubTitle() {
@@ -500,7 +502,8 @@
                 tbody.appendChild(tr);
             }
 
-            autoCompleteMatrix();
+            /* Inicialització buida */
+            clearMatrix();
             renderValueSelector();
             if (activeView === 'grouped') renderGroupedView();
             resetSimulation();
@@ -527,7 +530,8 @@
         }
 
         function validateMatrix() {
-            const allClasses = ['prob-1', 'prob-2', 'prob-3-4', 'prob-5-6', 'prob-7plus', 'bg-rose-500', 'text-white', 'border-rose-700'];
+            const allClasses = ['prob-1', 'prob-2', 'prob-3', 'prob-4', 'prob-5', 'prob-6', 'prob-7plus', 'bg-rose-500', 'text-white', 'border-rose-700'];
+            let filledCount = 0;
 
             const inputs = document.querySelectorAll('.cell-input');
             inputs.forEach(input => {
@@ -540,6 +544,7 @@
                 input.classList.remove(...allClasses);
 
                 if (val !== null) {
+                    filledCount++;
                     if (val === expected) {
                         input.classList.add(getProbClass(val, currentOp));
                         if (errorBadge) errorBadge.classList.add('hidden');
@@ -552,6 +557,14 @@
                     if (errorBadge) errorBadge.classList.add('hidden');
                 }
             });
+
+            const badge = document.getElementById('progress-badge');
+            badge.innerText = `${filledCount} / 36 cel·les`;
+            if (filledCount === 36) {
+                badge.className = 'text-xs font-black text-emerald-600 leading-tight';
+            } else {
+                badge.className = 'text-xs font-black text-amber-600 leading-tight';
+            }
 
             highlightSelectedValue();
         }
@@ -602,7 +615,7 @@
             document.getElementById('event-details').innerHTML = `
                 <div class="font-black text-emerald-800 mb-0.5">Resultat = ${val}</div>
                 <div>Freqüència teòrica: <strong>${freq} de 36 vegades</strong> (${pct}%)</div>
-                <div class="mt-1 text-[9px] text-slate-500">Probabilitat segons la regla de Laplace: $P(${val}) = \\frac{${freq}}{36}$</div>
+                <div class="mt-1 text-[9px] text-slate-500">Probabilitat teòrica segons Laplace: $P(${val}) = \\frac{${freq}}{36}$</div>
             `;
 
             highlightSelectedValue();
@@ -726,19 +739,19 @@
             const statusLabel = document.getElementById('sim-status-label');
 
             if (totalSims === 0) {
-                msg.innerText = 'Comença simulant poques tirades (+1 o +10). Observa com les barres taronja (experiment) no coincideixen amb les verdes (teoria).';
+                msg.innerText = 'Comença simulant poques tirades (+1 o +10). Observa com les barres taronja (experiment) no coincideixen exactament amb les verdes (teoria).';
                 statusLabel.innerText = 'Sense dades suficients';
             } else if (totalSims < 20) {
-                msg.innerText = `L'atzar domina (${totalSims} tirades). Les barres taronja es mouen molt i no coincideixen amb la teoria.`;
+                msg.innerText = `L'atzar domina (${totalSims} tirades). Les barres taronja varien força respecte a la teoria.`;
                 statusLabel.innerText = 'Atzar Pur (Alta variabilitat)';
             } else if (totalSims < 80) {
-                msg.innerText = `Amb ${totalSims} tirades, es comença a intuir la forma del gràfic teòric. Augmenta la mostra per veure com l'atzar es regula.`;
+                msg.innerText = `Amb ${totalSims} tirades, ja es percep la tendència del gràfic teòric. Augmenta la mostra per veure com l'atzar es regula.`;
                 statusLabel.innerText = 'Primeres tendències...';
             } else if (totalSims < 250) {
-                msg.innerText = `Amb ${totalSims} tirades, les barres taronja s'enganxen pràcticament a les verdes. La freqüència relativa s'estabilitza.`;
+                msg.innerText = `Amb ${totalSims} tirades, les barres taronja s'aproximen notablement a les verdes. La freqüència relativa s'estabilitza.`;
                 statusLabel.innerText = 'Ajust Teoria-Experiment';
             } else {
-                msg.innerText = `Llei dels Grans Nombres Confirmada! Amb ${totalSims} tirades, la teoria i la realitat coincideixen gairebé al 100%.`;
+                msg.innerText = `Llei dels Grans Nombres Confirmada! Amb ${totalSims} tirades, la distribució experimental s'ajusta al model teòric.`;
                 statusLabel.innerText = 'Llei dels Grans Nombres Confirmada!';
             }
         }
