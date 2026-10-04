@@ -23,6 +23,36 @@
         .theme-blue { background-color: #eff6ff !important; border-color: #bfdbfe !important; color: #1d4ed8 !important; }
         .theme-green { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; color: #15803d !important; }
 
+        /* Icona d'error overlay sobre les cel·les amb valor incorrecte */
+        .cell-container {
+            position: relative;
+            display: inline-block;
+        }
+        .error-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            background-color: #dc2626;
+            color: #ffffff;
+            font-size: 9px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 25;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            border: 1px solid #ffffff;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
         /* Assignació de colors segons les freqüències sobre 36 */
         .prob-1 { background-color: #f1f5f9 !important; color: #475569 !important; border: 2px solid #cbd5e1 !important; } /* 1/36 - Gris */
         .prob-2 { background-color: #e0f2fe !important; color: #0369a1 !important; border: 2px solid #38bdf8 !important; } /* 2/36 - Blau */
@@ -446,6 +476,9 @@
                     const td = document.createElement('td');
                     td.className = 'p-0';
                     
+                    const container = document.createElement('div');
+                    container.className = 'cell-container';
+
                     const input = document.createElement('input');
                     input.type = 'text';
                     input.dataset.r = i - 1;
@@ -453,7 +486,15 @@
                     input.className = 'cell-input w-8 h-8 text-center rounded-lg border border-slate-300 bg-white focus:outline-none';
                     
                     input.addEventListener('input', (e) => onCellInput(i - 1, j - 1, e.target.value));
-                    td.appendChild(input);
+                    
+                    const errorBadge = document.createElement('div');
+                    errorBadge.className = 'error-badge hidden';
+                    errorBadge.id = `error-badge-${i-1}-${j-1}`;
+                    errorBadge.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+
+                    container.appendChild(input);
+                    container.appendChild(errorBadge);
+                    td.appendChild(container);
                     tr.appendChild(td);
                 }
                 tbody.appendChild(tr);
@@ -494,17 +535,21 @@
                 const c = parseInt(input.dataset.c, 10);
                 const val = matrixData[r][c];
                 const expected = getExpectedValue(r + 1, c + 1, currentOp);
+                const errorBadge = document.getElementById(`error-badge-${r}-${c}`);
 
                 input.classList.remove(...allClasses);
 
                 if (val !== null) {
                     if (val === expected) {
                         input.classList.add(getProbClass(val, currentOp));
+                        if (errorBadge) errorBadge.classList.add('hidden');
                     } else {
                         input.classList.add('bg-rose-500', 'text-white', 'border-rose-700');
+                        if (errorBadge) errorBadge.classList.remove('hidden');
                     }
                 } else {
                     input.classList.add('bg-white', 'border-slate-300');
+                    if (errorBadge) errorBadge.classList.add('hidden');
                 }
             });
 
