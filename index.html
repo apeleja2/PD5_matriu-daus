@@ -78,7 +78,7 @@
                         <span class="text-[10px] text-slate-400 font-bold">Atzar, Probabilitat i Simulació</span>
                     </div>
                     <h1 class="text-sm font-black text-slate-900 leading-tight">MATRIUS DE DAUS I ATZAR</h1>
-                    <p id="sub-title" class="text-[11px] text-slate-500 font-medium leading-tight">Resta sempre la xifra del dau més gran menys la del dau més petit (|D1 - D2|)</p>
+                    <p id="sub-title" class="text-[11px] text-slate-500 font-medium leading-tight">Suma les dues cares dels daus (D1 + D2)</p>
                 </div>
             </div>
             
@@ -99,11 +99,11 @@
             <span class="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1 mr-1">
                 <i class="fa-solid fa-bars-staggered"></i> OPERACIÓ:
             </span>
-            <button id="op-dif" onclick="setOperation('dif')" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition bg-emerald-600 text-white border-emerald-600 shadow-xs">
-                Gran - Petit <span class="text-[9px] font-normal opacity-80">(|D1 - D2|)</span>
+            <button id="op-suma" onclick="setOperation('suma')" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition bg-emerald-600 text-white border-emerald-600 shadow-xs">
+                + Suma <span class="text-[9px] font-normal opacity-80">(D1 + D2)</span>
             </button>
-            <button id="op-suma" onclick="setOperation('suma')" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition bg-slate-50 text-slate-700 border-slate-200">
-                + Suma <span class="text-[9px] font-normal opacity-70">(D1 + D2)</span>
+            <button id="op-dif" onclick="setOperation('dif')" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition bg-slate-50 text-slate-700 border-slate-200">
+                Gran - Petit <span class="text-[9px] font-normal opacity-70">(|D1 - D2|)</span>
             </button>
             <button id="op-resta" onclick="setOperation('resta')" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition bg-slate-50 text-slate-700 border-slate-200">
                 - Resta Directa <span class="text-[9px] font-normal opacity-70">(D2 - D1)</span>
@@ -136,7 +136,7 @@
 
                     <div class="flex gap-1.5">
                         <button onclick="autoCompleteMatrix()" class="text-[10px] bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold px-2 py-1 rounded-md border border-emerald-200 transition flex items-center gap-1">
-                            <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i> Solució / Completar
+                            <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i> Completar Matriu
                         </button>
                         <button onclick="clearMatrix()" class="text-[10px] bg-slate-50 hover:bg-slate-100 text-rose-600 font-bold px-2 py-1 rounded-md border border-slate-200 transition">
                             <i class="fa-solid fa-rotate-right"></i> Netejar
@@ -167,6 +167,7 @@
                     </div>
                 </div>
 
+                <!-- Legend of probabilities -->
                 <div class="mt-2.5 pt-2 border-t border-slate-100">
                     <div class="text-[9px] font-black uppercase text-slate-400 mb-1 text-center">FREQÜÈNCIA TEÒRICA EN L'ESPAI MOSTRAL (x / 36)</div>
                     <div class="grid grid-cols-7 gap-1 text-center text-[8px] font-bold">
@@ -259,7 +260,7 @@
                 <!-- Animació visual de tirada -->
                 <div class="flex items-center justify-center gap-2 my-1.5 bg-emerald-50/50 p-1.5 rounded-xl border border-emerald-100">
                     <div id="dice-1" class="w-7 h-7 bg-white rounded shadow-xs border border-blue-300 flex items-center justify-center font-black text-blue-700 text-sm">-</div>
-                    <span id="dice-op-sign" class="font-black text-slate-400 text-xs">-</span>
+                    <span id="dice-op-sign" class="font-black text-slate-400 text-xs">+</span>
                     <div id="dice-2" class="w-7 h-7 bg-white rounded shadow-xs border border-emerald-300 flex items-center justify-center font-black text-emerald-700 text-sm">-</div>
                     <span class="font-black text-slate-400 text-xs">=</span>
                     <div id="dice-res" class="w-8 h-8 bg-emerald-600 text-white rounded-lg shadow-xs flex items-center justify-center font-black text-sm">-</div>
@@ -298,6 +299,7 @@
         </section>
     </main>
 
+    <!-- Modal per a Orientacions Teacher -->
     <div id="orientacions-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
         <div class="bg-white rounded-2xl max-w-lg w-full p-4 shadow-xl border border-slate-200 max-h-[85vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-2 border-b pb-2">
@@ -325,7 +327,8 @@
     </div>
 
     <script>
-        let currentOp = 'dif';
+        // State management with Suma (D1 + D2) set as default operation
+        let currentOp = 'suma';
         let isDirectOrder = true;
         let activeView = 'matrix';
         let matrixData = Array(6).fill(null).map(() => Array(6).fill(null));
@@ -502,7 +505,7 @@
                 tbody.appendChild(tr);
             }
 
-            /* Inicialització buida */
+            /* Starts COMPLETELY EMPTY (0/36) */
             clearMatrix();
             renderValueSelector();
             if (activeView === 'grouped') renderGroupedView();
